@@ -19,50 +19,88 @@ class Vector {
     return this._y;
   }
 
-  length() {
-    return Math.sqrt(this._x * this._x + this._y * this._y);
+  get length() {
+    let x = this._x, y = this._y;
+
+    return Math.sqrt(x * x + y * y);
   }
 
-  add(vec2) {
-    if(vec2.constructor === Vector) {
-      return new Vector(this._x + vec2.x, this._y + vec2.y);
-    } else if(vec2.constructor === Array && vec2.length === 2) {
-      return new Vector(this._x + vec2[0], this._y + vec2[1]);
-    } else {
-      return false;
+  add(vec) {
+    let x = this._x, y = this._y;
+    let result = false;
+
+    try {
+      if(vec.constructor === Vector) {
+        result = new Vector(x + vec._x, y + vec._y);
+      } else if(vec.constructor === Array && vec.length === 2) {
+        result = new Vector(x + vec[0], y + vec[1]);
+      }
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    } finally {
+      return result;
     }
   }
 
-  subt(vec2) {
-    if(vec2.constructor === Vector) {
-      return new Vector(this._x - vec2.x, this._y - vec2._y);
-    } else if(vec2.constructor === Array && vec2.length === 2) {
-      return new Vector(this._x - vec2[0], this._y - vec2[1]);
-    } else {
-      return false;
+  subt(vec) {
+    let x = this._x, y = this._y;
+    let result = false;
+
+    try {
+      if(vec.constructor === Vector) {
+        result = new Vector(x - vec._x, y - vec._y);
+      } else if(vec.constructor === Array && vec.length === 2) {
+        result = new Vector(x - vec[0], y - vec[1]);
+      }
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    } finally {
+      return result;
     }
   }
 
   mult(scalar) {
+    let x = this._x, y = this._y;
+
     if(typeof scalar === "number") {
-      return new Vector(this._x * scalar, this._y * scalar);
+      return new Vector(x * scalar, y * scalar);
     } else {
       return false;
     }
   }
 
-  dot(vec2) {
-    if(vec2.constructor === Vector) {
-      return ((this._x * vec2.x) + (this._y * vec2.y));
-    } else if(vec2.constructor === Array && vec2.length ===2) {
-      return ((this._x * vec2[0]) + (this._y * vec2[1]));
+  div(scalar) {
+    let x = this._x, y = this._y;
+
+    if(typeof scalar === "number") {
+      return new Vector(x / scalar, y / scalar);
     } else {
       return false;
     }
   }
 
-  unit() {
-    return new Vector(this._x / this.length(), this._y / this.length());
+  dot(vec) {
+    let x = this._x, y = this._y;
+    let result = false;
+
+    try {
+      if(vec.constructor === Vector) {
+        result = ((x * vec._x) + (y * vec._y));
+      } else if(vec.constructor === Array && vec.length === 2) {
+        result = ((x * vec[0]) + (y * vec[1]));
+      }
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    } finally {
+      return result;
+    }
+  }
+
+  normalize() {
+    let x = this._x, y = this._y;
+    let mag = this.length;
+
+    return new Vector(x / mag, y / mag);
   }
 
   toArray() {
@@ -70,14 +108,113 @@ class Vector {
   }
 
   toString() {
-    return `x: ${this._x}, y: ${this._y}`;
+    return `(${this._x}, ${this._y})`;
+  }
+
+  static add(v1, v2) {
+    let result = false;
+
+    try {
+      if(v1.constructor === Array) {
+        v1 = Vector.toVector(v1);
+      }
+      if(v2.constructor === Array) {
+        v2 = Vector.toVector(v2);
+      }
+
+      result = v1.add(v2);
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    } finally {
+      return result;
+    }
+  }
+
+  static subt(v1, v2) {
+    let result = false;
+
+    try {
+      if(v1.constructor === Array) {
+        v1 = Vector.toVector(v1);
+      }
+      if(v2.constructor === Array) {
+        v2 = Vector.toVector(v2);
+      }
+
+      result = v1.subt(v2);
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    } finally {
+      return result;
+    }
+  }
+
+  static mult(scalar, vec) {
+    let result = false;
+
+    try {
+      if(typeof scalar === 'number') {
+        if(vec.constructor === Array) {
+          vec = Vector.toVector(vec);
+        }
+
+        result = vec.mult(scalar);
+      }
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    } finally {
+      return result;
+    }
+  }
+
+  static div(scalar, vec) {
+    let result = false;
+
+    try {
+      if(typeof scalar === 'number') {
+        if(vec.constructor === Array) {
+          vec = Vector.toVector(vec);
+        }
+
+        result = vec.div(scalar);
+      }
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    } finally {
+      return result;
+    }
+  }
+
+  static dot(v1, v2) {
+    let result = false;
+
+    try {
+      if(v1.constructor === Array) {
+        v1 = Vector.toVector(v1);
+      }
+      if(v2.constructor === Array) {
+        v2 = Vector.toVector(v2);
+      }
+
+      result = v1.dot(v2);
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    } finally {
+      return result;
+    }
   }
 
   static toVector(arr) {
-    if(arr.constructor === Array && arr.length === 2) {
-        return new Vector(arr[0], arr[1]);
-    } else {
-      return false;
+    let result = false;
+
+    try {
+      if(arr.constructor === Array && arr.length === 2) {
+        result = new Vector(arr[0], arr[1]);
+      }
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    } finally {
+      return result;
     }
   }
 }
