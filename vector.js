@@ -204,6 +204,17 @@ class Vector {
     }
   }
 
+  static unit(vec) {
+    if(vec.constructor === Array) {
+      vec = Vector.toVector(vec);
+    }
+
+    let x = vec._x, y = vec._y;
+    let mag = vec.length;
+
+    return new Vector(x / mag, y / mag);
+  }
+
   static toVector(arr) {
     let result = false;
 
