@@ -1,4 +1,18 @@
+/**
+ * @name VectorJS
+ * @description An implementation of 2D mathematical vectors in JavaScript using Cartesian coordinates.
+ * @author Spike Burton
+ */
+
 class Vector {
+  /**
+   * A vector is defined here as a pair of X and Y coordinates with magnitude and direction.
+   * Each operational method can accept either a Vector object or a 1-dimensional array
+   * containing two elements representing the X and Y coordinates.
+   *
+   * @param {x} x
+   * @param {y} y
+   */
   constructor(x,y) {
     this._x = x;
     this._y = y;
@@ -20,16 +34,29 @@ class Vector {
   }
 
   get length() {
+    /**
+     * length() is implemented here as a getter, so you can just call `vec.length`
+     * makes it feel more native (like an array or a string)
+     * simply calculates the magnitude of the vector based on the following equation:
+     * length^2 = x^2 + y^2
+     */
     let x = this._x, y = this._y;
 
     return Math.sqrt(x * x + y * y);
   }
 
+  /* Instance Methods */
+
   add(vec) {
+    /**
+     * add two vectors
+     * recall that a + b = b + a
+     */
     let x = this._x, y = this._y;
     let result = false;
 
     try {
+      // do some type checking here
       if(vec.constructor === Vector) {
         result = new Vector(x + vec._x, y + vec._y);
       } else if(vec.constructor === Array && vec.length === 2) {
@@ -43,10 +70,15 @@ class Vector {
   }
 
   subt(vec) {
+    /**
+     * Subtract two vectors
+     * vec1.subt(vec2) is equivalent to vec1 - vec2
+     */
     let x = this._x, y = this._y;
     let result = false;
 
     try {
+      // type checking
       if(vec.constructor === Vector) {
         result = new Vector(x - vec._x, y - vec._y);
       } else if(vec.constructor === Array && vec.length === 2) {
@@ -60,6 +92,10 @@ class Vector {
   }
 
   mult(scalar) {
+    /**
+     * vector multiplication by a scalar
+     * recall that n * vec is equivalent to n * (vec.x, vec.y)
+     */
     let x = this._x, y = this._y;
 
     if(typeof scalar === "number") {
@@ -70,8 +106,13 @@ class Vector {
   }
 
   div(scalar) {
+    /**
+     * Divide a vector by a scalar
+     * Recall that vec / n is equivalent to (vec.x, vec.y) / n
+     */
     let x = this._x, y = this._y;
 
+    // type check the input to make sure it's a scalar value
     if(typeof scalar === "number") {
       return new Vector(x / scalar, y / scalar);
     } else {
@@ -79,11 +120,18 @@ class Vector {
     }
   }
 
+  //
   dot(vec) {
+    /**
+     * Dot product of two vectors
+     * Recall the dot product vec1 * vec2 is equivalent to:
+     * (vec1.x * vec2.x) + (vec1.y * vec2.y)
+     */
     let x = this._x, y = this._y;
     let result = false;
 
     try {
+      // type checking
       if(vec.constructor === Vector) {
         result = ((x * vec._x) + (y * vec._y));
       } else if(vec.constructor === Array && vec.length === 2) {
@@ -97,19 +145,16 @@ class Vector {
   }
 
   normalize() {
+    /**
+     * A method to normalize a vector, i.e. returns the unit vector
+     */
     let x = this._x, y = this._y;
     let mag = this.length;
 
     return new Vector(x / mag, y / mag);
   }
 
-  toArray() {
-    return [this._x, this._y];
-  }
-
-  toString() {
-    return `(${this._x}, ${this._y})`;
-  }
+  /* Class Methods */
 
   static add(v1, v2) {
     let result = false;
@@ -204,15 +249,19 @@ class Vector {
     }
   }
 
-  static unit(vec) {
+  static normalize(vec) {
     if(vec.constructor === Array) {
       vec = Vector.toVector(vec);
     }
 
-    let x = vec._x, y = vec._y;
-    let mag = vec.length;
+    if(vec && vec.constructor === Vector) {
+      let x = vec._x, y = vec._y;
+      let mag = vec.length;
 
-    return new Vector(x / mag, y / mag);
+      return new Vector(x / mag, y / mag);
+    } else {
+      return false;
+    }
   }
 
   static toVector(arr) {
@@ -227,6 +276,24 @@ class Vector {
     } finally {
       return result;
     }
+  }
+
+  /* Helper Methods */
+
+  toArray() {
+    /**
+     * Convert a vector to a 1-dimensional array containing two elements
+     * Format is [x,y]
+     */
+    return [this._x, this._y];
+  }
+
+  toString() {
+    /**
+     * Format the vector as a string
+     * Format is `(x, y)`
+     */
+    return `(${this._x}, ${this._y})`;
   }
 }
 
