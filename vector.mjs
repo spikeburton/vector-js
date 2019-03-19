@@ -6,7 +6,7 @@
  **/
 
 // Import our improved type checker
-import is from 'is';
+import is from './is.mjs';
 
 // Declare our closure that returns the prototype of Vector
 const Vector = ((...args) => {
@@ -37,8 +37,12 @@ const Vector = ((...args) => {
     constructor(...args) {
       this[Symbol('_wm')] = new WeakMap();
       
-      // bind our variable number of coordinates to the WeakMap 
-      _root(this).set(this, {coords: [...args]});
+      if ([...args].length < 2) {
+        throw new Error('Vectors must reside in at least 2 dimensions.');
+      } else {
+        // bind our variable number of coordinates to the WeakMap 
+        _root(this).set(this, {coords: [...args]});
+      }
     };
 
     // return coordinates array
@@ -52,10 +56,16 @@ const Vector = ((...args) => {
 
     // single coordinate setter / getter
     setAxis(axisNum, newValue) {
-      result = false;
+      let result = false;
 
       try {
         if (is(newValue, "Number")) {
+          let min = 0;
+          let max = this.coords.length - 1;
+          
+          axisNum = (axisNum < min) ? 0 : axisNum;
+          axisNum = (axisNum > max) ? max : axisNum;
+
           this.coords[axisNum] = newValue;
           result = true;
         }
@@ -68,6 +78,12 @@ const Vector = ((...args) => {
 
     getAxis(axisNum) {
       if (is(axisNum, "Number")) {
+        let min = 0;
+        let max = this.coords.length - 1;
+        
+        axisNum = (axisNum < min) ? 0 : axisNum;
+        axisNum = (axisNum > max) ? max : axisNum;
+
         return this.coords[axisNum];
       }
     };
@@ -80,7 +96,7 @@ const Vector = ((...args) => {
        * simply calculates the magnitude of the vector based on the following equation:
        * length^2 = x^2 + y^2
        */
-      return Math.sqrt(this.coords.reduce((acc, cur) => acc + cur ** 2));
+      return Math.sqrt(this.coords.reduce((acc, cur) => acc + cur ** 2, 0));
     };
 
     /* Instance Methods */
@@ -142,13 +158,13 @@ const Vector = ((...args) => {
     /* Class Methods */
 
     // Array reduce callbacks
-    static vectorAdd = (acc, cur) => acc + cur;
-    static vectorSub = (acc, cur) => acc - cur;
-    static vectorMul = (acc, cur) => acc * cur;
-    static vectorDiv = (acc, cur) => acc / cur;
+    static vectorAdd(acc, cur) { return acc + cur };
+    static vectorSub(acc, cur) { return acc - cur };
+    static vectorMul(acc, cur) { return acc * cur };
+    static vectorDiv(acc, cur) { return acc / cur };
 
     // Arithmetic operator function
-    static operate(v1, v2, opFuncArray) {
+    static operate(v1, v2, opFuncArray, useOne=false) {
       // only proceed if all arguments have been passed
       if (v1 && v2 && opFuncArray) {
         // auto format incoming data as vectors
@@ -173,12 +189,15 @@ const Vector = ((...args) => {
 
             // iterate over the coordinates in the vectors
             for (let c=0; c<a.length; c++) {
-              // store the result of the operation performed inside opFunc
-              results.push([ a[c], b[c] ].reduce(opFuncArray[0]));
+              // Store the result of the operation performed inside opFunc.
+
+              // We need to programmatically define the init value because
+              // multiplication requires 1 as the init value, not zero.
+              results.push([ a[c], b[c] ].reduce(opFuncArray[0].f, opFuncArray[0].i));
             }
             // reduce further if this is dot product or similar
             if (opFuncArray.length === 2) {
-              results.reduce(opFuncArray[1]);
+              results = results.reduce(opFuncArray[1].f, opFuncArray[1].i);
             }
           }
         } catch(error) {
@@ -196,7 +215,7 @@ const Vector = ((...args) => {
 
       try {
 
-        let params = Vector.operate(v1, v2, [Vector.vectorAdd]);
+        let params = Vector.operate(v1, v2, [{f: Vector.vectorAdd, i: 0}]);
         result = new Vector(...params);
 
       } catch (error) {
@@ -213,7 +232,7 @@ const Vector = ((...args) => {
 
       try {
 
-        let params = Vector.operate(v1, v2, [Vector.vectorSub]);
+        let params = Vector.operate(v1, v2, [{f: Vector.vectorSub, i: 0}]);
         result = new Vector(...params);
 
       } catch (error) {
@@ -242,7 +261,7 @@ const Vector = ((...args) => {
           scaleArray.push(scalar);
         }
 
-        let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorMul]);
+        let params = Vector.operate(vectorObj, scaleArray, [{f: Vector.vectorMul, i: 1}]);
         result = new Vector(...params);
 
       } catch (error) {
@@ -271,7 +290,7 @@ const Vector = ((...args) => {
           scaleArray.push(scalar);
         }
 
-        let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+        let params = Vector.operate(vectorObj, scaleArray, [{f: Vector.vectorDiv, i: 1}]);
         result = new Vector(...params);
 
       } catch (error) {
@@ -288,8 +307,16 @@ const Vector = ((...args) => {
 
       try {
 
-        let params = Vector.operate(v1, v2, [Vector.vectorMul, Vector.vectorAdd]);
-        result = new Vector(...params);
+        let product = Vector.operate(
+          v1,
+          v2,
+          [
+            {f: Vector.vectorMul, i: 1},
+            {f: Vector.vectorAdd, i: 0}
+          ]
+        );
+
+        result = product;
 
       } catch (error) {
         console.log(`ERROR: ${error}`);
@@ -316,7 +343,7 @@ const Vector = ((...args) => {
             scaleArray.push(magnitude);
           }
 
-          let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+          let params = Vector.operate(vectorObj, scaleArray, [{f: Vector.vectorDiv, i: 1}]);
           result = new Vector(...params);
         }
       } catch (error) {
