@@ -26,13 +26,12 @@ const Vector = ((...args) => {
 
   return class Vector {
     /**
-     * A vector is defined here as a pair of X, Y, and  Z coordinates with magnitude and direction.
+     * A vector is defined here as an unknown quantity of spacial coordinates
+     * with magnitude and direction.
      * Each operational method can accept either a Vector object or a 1-dimensional array
-     * containing three elements representing the X, Y, and Z coordinates.
+     * containing enough elements to represent the total number of coordinates.
      *
-     * @param {x} x
-     * @param {y} y
-     * @param {z} z
+     * @param {...args} 
      */
     constructor(...args) {
       this[Symbol('_wm')] = new WeakMap();
@@ -74,7 +73,7 @@ const Vector = ((...args) => {
     };
 
     /* Instance Methods */
- 
+
     add(vectorObj) {
       /**
        * add two vectors
@@ -83,9 +82,8 @@ const Vector = ((...args) => {
 
       // if there is a vector to act on
       if (vectorObj) {
-        // define our variables
-        let sums = [];
-        let coords;
+        // define our variable
+        let sums = Vector.operate(this, vectorObj, [this.vectorAdd]);
         let result = false;
 
         // if it is a vector instance
@@ -235,8 +233,14 @@ const Vector = ((...args) => {
 
     /* Class Methods */
 
-    // arithmetic operator function
-    static operate(v1, v2, opFuncArray, scalar) {
+    // Array reduce callbacks
+    static vectorAdd = (acc, cur) => acc + cur;
+    static vectorSub = (acc, cur) => acc - cur;
+    static vectorMul = (acc, cur) => acc * cur;
+    static vectorDiv = (acc, cur) => acc / cur;
+
+    // Arithmetic operator function
+    static operate(v1, v2, opFuncArray) {
       // only proceed if all arguments have been passed
       if (v1 && v2 && opFuncArray) {
         // auto format incoming data as vectors
@@ -277,20 +281,54 @@ const Vector = ((...args) => {
           return results;
         }
       }
-    }
+    };
 
     static add(v1, v2) {
       let result = false;
 
       try {
-        if(v1.constructor === Array) {
-          v1 = Vector.toVector(v1);
-        }
-        if(v2.constructor === Array) {
-          v2 = Vector.toVector(v2);
+        result = Vector.operate(v1, v2, [Vector.vectorAdd]);
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+
+        return result;
+
+      }
+    }
+
+    static sub(v1, v2) {
+      let result = false;
+
+      try {
+        result = Vector.operate(v1, v2, [Vector.vectorSub]);
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+
+        return result;
+
+      }
+    }
+
+    static mul(scalar, vectorObj) {
+      let result = false;
+
+      try {
+        let scaleArray = [];
+        let coords;
+
+        if (is(vectorObj, "Vector")) {
+          coords = vectorObj.coords;
+        } else if (is(vectorObj, "Array")) {
+          coords = vectorObj;
         }
 
-        result = v1.add(v2);
+        for (let i=0; i<coords.length; i++) {
+          scaleArray.push(scalar);
+        }
+
+        result = Vector.operate(vectorObj, scaleArray, [Vector.vectorMul]);
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
@@ -298,54 +336,24 @@ const Vector = ((...args) => {
       }
     }
 
-    static subt(v1, v2) {
+    static div(scalar, vectorObj) {
       let result = false;
 
       try {
-        if(v1.constructor === Array) {
-          v1 = Vector.toVector(v1);
+        let scaleArray = [];
+        let coords;
+
+        if (is(vectorObj, "Vector")) {
+          coords = vectorObj.coords;
+        } else if (is(vectorObj, "Array")) {
+          coords = vectorObj;
         }
-        if(v2.constructor === Array) {
-          v2 = Vector.toVector(v2);
+
+        for (let i=0; i<coords.length; i++) {
+          scaleArray.push(scalar);
         }
 
-        result = v1.subt(v2);
-      } catch (error) {
-        console.log(`ERROR: ${error}`);
-      } finally {
-        return result;
-      }
-    }
-
-    static mult(scalar, vec) {
-      let result = false;
-
-      try {
-        if(typeof scalar === 'number') {
-          if(vec.constructor === Array) {
-            vec = Vector.toVector(vec);
-          }
-
-          result = vec.mult(scalar);
-        }
-      } catch (error) {
-        console.log(`ERROR: ${error}`);
-      } finally {
-        return result;
-      }
-    }
-
-    static div(scalar, vec) {
-      let result = false;
-
-      try {
-        if(typeof scalar === 'number') {
-          if(vec.constructor === Array) {
-            vec = Vector.toVector(vec);
-          }
-
-          result = vec.div(scalar);
-        }
+        result = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
@@ -357,14 +365,7 @@ const Vector = ((...args) => {
       let result = false;
 
       try {
-        if(v1.constructor === Array) {
-          v1 = Vector.toVector(v1);
-        }
-        if(v2.constructor === Array) {
-          v2 = Vector.toVector(v2);
-        }
-
-        result = v1.dot(v2);
+        result = Vector.operate(v1, v2, [Vector.vectorMul, Vector.vectorAdd]);
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
@@ -372,18 +373,28 @@ const Vector = ((...args) => {
       }
     }
 
-    static normalize(vec) {
-      if(vec.constructor === Array) {
-        vec = Vector.toVector(vec);
-      }
+    static normalize(vectorObj) {
+      let result = false;
 
-      if(vec && vec.constructor === Vector) {
-        let x = vec._x, y = vec._y;
-        let mag = vec.length;
+      try {
+        let scaleArray = [];
+        let magnitude;
+        let coords;
 
-        return new Vector(x / mag, y / mag);
-      } else {
-        return false;
+        if (is(vectorObj, "Vector")) {
+          coords = vectorObj.coords;
+          magnitude = vectorObj.length;
+
+          for (let i=0; i<coords.length; i++) {
+            scaleArray.push(magnitude);
+          }
+
+          result = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+        }
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+        return result;
       }
     }
 
