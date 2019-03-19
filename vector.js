@@ -1,300 +1,390 @@
 /**
  * @name VectorJS
- * @description An implementation of 2D mathematical vectors in JavaScript using Cartesian coordinates.
+ * @description An implementation of N-dimensional mathematical vectors in JavaScript using Cartesian coordinates.
  * @author Spike Burton
- */
+ * @author Allen Woods
+ **/
 
-class Vector {
-  /**
-   * A vector is defined here as a pair of X and Y coordinates with magnitude and direction.
-   * Each operational method can accept either a Vector object or a 1-dimensional array
-   * containing two elements representing the X and Y coordinates.
-   *
-   * @param {x} x
-   * @param {y} y
-   */
-  constructor(x,y) {
-    this._x = x;
-    this._y = y;
-  }
+// Import our improved type checker
+import is from 'is';
 
-  set x(newX) {
-    this._x = newX;
-  }
-  get x() {
-    return this._x;
-  }
+// Declare our closure that returns the prototype of Vector
+const Vector = ((...args) => {
+  const _root = function(objScope) {
+    // _root is a helper function hidden in the scope
+    // of this closure. The class can use it but no
+    // outside code can.
 
-  set y(newY) {
-    this._y = newY;
-  }
+    // The purpose of _root is to access the WeakMap
+    // where private properties are stored.
 
-  get y() {
-    return this._y;
-  }
+    // The WeakMap is bound to an embedded symbol.
 
-  get length() {
+    // The _root method effectively replaces keyword `this`
+    // when accessing the coords property
+    return objScope[ Object.getOwnPropertySymbols(objScope)[0] ];
+  };
+
+  return class Vector {
     /**
-     * length() is implemented here as a getter, so you can just call `vec.length`
-     * makes it feel more native (like an array or a string)
-     * simply calculates the magnitude of the vector based on the following equation:
-     * length^2 = x^2 + y^2
+     * A vector is defined here as an unknown quantity of spacial coordinates
+     * with magnitude and direction.
+     * Each operational method can accept either a Vector object or a 1-dimensional array
+     * containing enough elements to represent the total number of coordinates.
+     *
+     * @param {...args} 
      */
-    let x = this._x, y = this._y;
+    constructor(...args) {
+      this[Symbol('_wm')] = new WeakMap();
+      
+      // bind our variable number of coordinates to the WeakMap 
+      _root(this).set(this, {coords: [...args]});
+    };
 
-    return Math.sqrt(x * x + y * y);
-  }
+    // return coordinates array
+    get coords() {
+      return _root(this).get(this).coords;
+    };
 
-  /* Instance Methods */
+    set coords(newCoords) {
+      _root(this).get(this).coords = newCoords;
+    };
 
-  add(vec) {
-    /**
-     * add two vectors
-     * recall that a + b = b + a
-     */
-    let x = this._x, y = this._y;
-    let result = false;
+    // single coordinate setter / getter
+    setAxis(axisNum, newValue) {
+      result = false;
 
-    try {
-      // do some type checking here
-      if(vec.constructor === Vector) {
-        result = new Vector(x + vec._x, y + vec._y);
-      } else if(vec.constructor === Array && vec.length === 2) {
-        result = new Vector(x + vec[0], y + vec[1]);
+      try {
+        if (is(newValue, "Number")) {
+          this.coords[axisNum] = newValue;
+          result = true;
+        }
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+        return result;
       }
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
-    }
-  }
+    };
 
-  subt(vec) {
-    /**
-     * Subtract two vectors
-     * vec1.subt(vec2) is equivalent to vec1 - vec2
-     */
-    let x = this._x, y = this._y;
-    let result = false;
-
-    try {
-      // type checking
-      if(vec.constructor === Vector) {
-        result = new Vector(x - vec._x, y - vec._y);
-      } else if(vec.constructor === Array && vec.length === 2) {
-        result = new Vector(x - vec[0], y - vec[1]);
+    getAxis(axisNum) {
+      if (is(axisNum, "Number")) {
+        return this.coords[axisNum];
       }
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
+    };
+
+    // calculate the length of this vector
+    get length() {
+      /**
+       * length() is implemented here as a getter, so you can just call `vec.length`
+       * makes it feel more native (like an array or a string)
+       * simply calculates the magnitude of the vector based on the following equation:
+       * length^2 = x^2 + y^2
+       */
+      return Math.sqrt(this.coords.reduce((acc, cur) => acc + cur ** 2));
+    };
+
+    /* Instance Methods */
+
+    add(vectorObj) {
+      /**
+       * add two vectors
+       * recall that a + b = b + a
+       */
+
+      return Vector.add(this, vectorObj);
+    };
+
+    sub(vectorObj) {
+      /**
+       * Subtract two vectors
+       * vec1.subt(vec2) is equivalent to vec1 - vec2
+       */
+      return Vector.sub(this, vectorObj);
+    };
+
+    mul(scalar) {
+      /**
+       * vector multiplication by a scalar
+       * recall that n * vec is equivalent to n * (vec.x, vec.y)
+       */
+       return Vector.mul(scalar, this);
+    };
+
+    div(scalar) {
+      /**
+       * Divide a vector by a scalar
+       * Recall that vec / n is equivalent to (vec.x, vec.y) / n
+       */
+       return Vector.div(scalar, this);
+    };
+
+    //
+    dot(vectorObj) {
+      /**
+       * Dot product of two vectors
+       * Recall the dot product vec1 * vec2 is equivalent to:
+       * (vec1.x * vec2.x) + (vec1.y * vec2.y)
+       */
+      return Vector.dot(this, vectorObj);
+    };
+
+    normalize() {
+      /**
+       * A method to normalize a vector, i.e. returns the unit vector
+       */
+      return Vector.normalize(this);
+    };
+
+    cross(vectorObj) {
+      return Vector.cross(this, vectorObj);
     }
-  }
 
-  mult(scalar) {
-    /**
-     * vector multiplication by a scalar
-     * recall that n * vec is equivalent to n * (vec.x, vec.y)
-     */
-    let x = this._x, y = this._y;
+    /* Class Methods */
 
-    if(typeof scalar === "number") {
-      return new Vector(x * scalar, y * scalar);
-    } else {
-      return false;
-    }
-  }
+    // Array reduce callbacks
+    static vectorAdd = (acc, cur) => acc + cur;
+    static vectorSub = (acc, cur) => acc - cur;
+    static vectorMul = (acc, cur) => acc * cur;
+    static vectorDiv = (acc, cur) => acc / cur;
 
-  div(scalar) {
-    /**
-     * Divide a vector by a scalar
-     * Recall that vec / n is equivalent to (vec.x, vec.y) / n
-     */
-    let x = this._x, y = this._y;
+    // Arithmetic operator function
+    static operate(v1, v2, opFuncArray) {
+      // only proceed if all arguments have been passed
+      if (v1 && v2 && opFuncArray) {
+        // auto format incoming data as vectors
+        v1 = (is(v1, "Array")) ? Vector.toVector(v1) : v1;
+        v2 = (is(v2, "Array")) ? Vector.toVector(v2) : v2;
 
-    // type check the input to make sure it's a scalar value
-    if(typeof scalar === "number") {
-      return new Vector(x / scalar, y / scalar);
-    } else {
-      return false;
-    }
-  }
+        // default to false for return value
+        let results = false;
+        // handle errors
+        try {
+          // point to the coordinate values of the vectors
+          let a = v1.coords;
+          let b = v2.coords;
 
-  //
-  dot(vec) {
-    /**
-     * Dot product of two vectors
-     * Recall the dot product vec1 * vec2 is equivalent to:
-     * (vec1.x * vec2.x) + (vec1.y * vec2.y)
-     */
-    let x = this._x, y = this._y;
-    let result = false;
+          // if the vectors are from different coordinate systems
+          if((a.length + b.length) % 2) {
+            // prevent further action
+            throw new Error(`Operations can only be performed on vectors that inhabit the same coordinate system.`)
+          } else {
+            // format our return value as an array
+            results = [];
 
-    try {
-      // type checking
-      if(vec.constructor === Vector) {
-        result = ((x * vec._x) + (y * vec._y));
-      } else if(vec.constructor === Array && vec.length === 2) {
-        result = ((x * vec[0]) + (y * vec[1]));
+            // iterate over the coordinates in the vectors
+            for (let c=0; c<a.length; c++) {
+              // store the result of the operation performed inside opFunc
+              results.push([ a[c], b[c] ].reduce(opFuncArray[0]));
+            }
+            // reduce further if this is dot product or similar
+            if (opFuncArray.length === 2) {
+              results.reduce(opFuncArray[1]);
+            }
+          }
+        } catch(error) {
+          // log any error we find, if any
+          console.log(`ERROR: ${error}`);
+        } finally {
+          // return the results
+          return results;
+        }
       }
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
-    }
-  }
+    };
 
-  normalize() {
-    /**
-     * A method to normalize a vector, i.e. returns the unit vector
-     */
-    let x = this._x, y = this._y;
-    let mag = this.length;
+    static add(v1, v2) {
+      let result = false;
 
-    return new Vector(x / mag, y / mag);
-  }
+      try {
 
-  /* Class Methods */
+        let params = Vector.operate(v1, v2, [Vector.vectorAdd]);
+        result = new Vector(...params);
 
-  static add(v1, v2) {
-    let result = false;
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
 
-    try {
-      if(v1.constructor === Array) {
-        v1 = Vector.toVector(v1);
+        return result;
+
       }
-      if(v2.constructor === Array) {
-        v2 = Vector.toVector(v2);
+    };
+
+    static sub(v1, v2) {
+      let result = false;
+
+      try {
+
+        let params = Vector.operate(v1, v2, [Vector.vectorSub]);
+        result = new Vector(...params);
+
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+
+        return result;
+
       }
+    };
 
-      result = v1.add(v2);
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
-    }
-  }
+    static mul(scalar, vectorObj) {
+      let result = false;
 
-  static subt(v1, v2) {
-    let result = false;
+      try {
+        let scaleArray = [];
+        let coords;
 
-    try {
-      if(v1.constructor === Array) {
-        v1 = Vector.toVector(v1);
-      }
-      if(v2.constructor === Array) {
-        v2 = Vector.toVector(v2);
-      }
-
-      result = v1.subt(v2);
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
-    }
-  }
-
-  static mult(scalar, vec) {
-    let result = false;
-
-    try {
-      if(typeof scalar === 'number') {
-        if(vec.constructor === Array) {
-          vec = Vector.toVector(vec);
+        if (is(vectorObj, "Vector")) {
+          coords = vectorObj.coords;
+        } else if (is(vectorObj, "Array")) {
+          coords = vectorObj;
         }
 
-        result = vec.mult(scalar);
-      }
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
-    }
-  }
-
-  static div(scalar, vec) {
-    let result = false;
-
-    try {
-      if(typeof scalar === 'number') {
-        if(vec.constructor === Array) {
-          vec = Vector.toVector(vec);
+        for (let i=0; i<coords.length; i++) {
+          scaleArray.push(scalar);
         }
 
-        result = vec.div(scalar);
+        let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorMul]);
+        result = new Vector(...params);
+
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+
+        return result;
+
       }
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
-    }
-  }
+    };
 
-  static dot(v1, v2) {
-    let result = false;
+    static div(scalar, vectorObj) {
+      let result = false;
 
-    try {
-      if(v1.constructor === Array) {
-        v1 = Vector.toVector(v1);
+      try {
+        let scaleArray = [];
+        let coords;
+
+        if (is(vectorObj, "Vector")) {
+          coords = vectorObj.coords;
+        } else if (is(vectorObj, "Array")) {
+          coords = vectorObj;
+        }
+
+        for (let i=0; i<coords.length; i++) {
+          scaleArray.push(scalar);
+        }
+
+        let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+        result = new Vector(...params);
+
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+
+        return result;
+
       }
-      if(v2.constructor === Array) {
-        v2 = Vector.toVector(v2);
+    };
+
+    static dot(v1, v2) {
+      let result = false;
+
+      try {
+
+        let params = Vector.operate(v1, v2, [Vector.vectorMul, Vector.vectorAdd]);
+        result = new Vector(...params);
+
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+
+        return result;
+
       }
+    };
 
-      result = v1.dot(v2);
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
-    }
-  }
+    static normalize(vectorObj) {
+      let result = false;
 
-  static normalize(vec) {
-    if(vec.constructor === Array) {
-      vec = Vector.toVector(vec);
-    }
+      try {
+        let scaleArray = [];
+        let magnitude;
+        let coords;
 
-    if(vec && vec.constructor === Vector) {
-      let x = vec._x, y = vec._y;
-      let mag = vec.length;
+        if (is(vectorObj, "Vector")) {
+          coords = vectorObj.coords;
+          magnitude = vectorObj.length;
 
-      return new Vector(x / mag, y / mag);
-    } else {
-      return false;
-    }
-  }
+          for (let i=0; i<coords.length; i++) {
+            scaleArray.push(magnitude);
+          }
 
-  static toVector(arr) {
-    let result = false;
-
-    try {
-      if(arr.constructor === Array && arr.length === 2) {
-        result = new Vector(arr[0], arr[1]);
+          let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+          result = new Vector(...params);
+        }
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+        return result;
       }
-    } catch (error) {
-      console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
+    };
+
+    static cross(v1, v2) {
+      let result = false;
+
+      try {
+        v1 = is(v1, "Array") ? Vector.toVector(v1) : v1;
+        v2 = is(v2, "Array") ? Vector.toVector(v2) : v2;
+
+        let a = v1.coords;
+        let b = v2.coords;
+
+        if (a.length === b.length && a.length >= 3) {
+          let params = [
+            a[1]*b[2] - a[2]*b[1],
+            a[2]*b[0] - a[0]*b[2],
+            a[0]*b[1] - a[1]*b[0]
+          ]
+          result = new Vector(...params)
+        } else {
+          throw new Error('Cross product is only available in three or more dimensions.');
+        }
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+        return result;
+      }
     }
-  }
 
-  /* Helper Methods */
+    static toVector(arrayObj) {
+      let result = false;
 
-  toArray() {
-    /**
-     * Convert a vector to a 1-dimensional array containing two elements
-     * Format is [x,y]
-     */
-    return [this._x, this._y];
-  }
+      try {
+        if(is(arrayObj, "Array") && arrayObj.length >= 2) {
+          result = new Vector(...arrayObj);
+        }
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+        return result;
+      }
+    };
 
-  toString() {
-    /**
-     * Format the vector as a string
-     * Format is `(x, y)`
-     */
-    return `(${this._x}, ${this._y})`;
-  }
-}
+    /* Helper Methods */
 
-module.exports = Vector;
+    toArray() {
+      /**
+       * Convert a vector to a 1-dimensional array containing two elements
+       * Format is [x,y]
+       */
+      return [...this.coords];
+    };
+
+    toString() {
+      /**
+       * Format the vector as a string
+       * Format is `(x, y)`
+       */
+      return `(${this.coords.join(', ')})`;
+    }
+  };
+})();
+
+export default Vector;
