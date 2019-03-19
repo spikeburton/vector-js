@@ -6,7 +6,7 @@
  **/
 
 // Import our improved type checker
-import { is } from 'is.js';
+import is from 'is';
 
 // Declare our closure that returns the prototype of Vector
 const Vector = ((...args) => {
@@ -20,7 +20,8 @@ const Vector = ((...args) => {
 
     // The WeakMap is bound to an embedded symbol.
 
-    // The _root method effectively replaces keyword `this`.
+    // The _root method effectively replaces keyword `this`
+    // when accessing the coords property
     return objScope[ Object.getOwnPropertySymbols(objScope)['_wm'] ];
   };
 
@@ -355,4 +356,4 @@ const Vector = ((...args) => {
   };
 })();
 
-module.exports = Vector;
+export default Vector;
