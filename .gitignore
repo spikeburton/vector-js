@@ -1,2 +1,2 @@
 # Ignore the stuff that node generates
-# node_modules
+node_modules
