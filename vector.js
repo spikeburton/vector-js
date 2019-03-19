@@ -1,6 +1,6 @@
 /**
  * @name VectorJS
- * @description An implementation of 3D mathematical vectors in JavaScript using Cartesian coordinates.
+ * @description An implementation of N-dimensional mathematical vectors in JavaScript using Cartesian coordinates.
  * @author Spike Burton
  * @author Allen Woods
  **/
@@ -8,7 +8,7 @@
 // Import our improved type checker
 import { is } from 'is.js';
 
-// Declare our closure that returns the prototype of Vector3d
+// Declare our closure that returns the prototype of Vector
 const Vector = ((...args) => {
   const _root = function(objScope) {
     // _root is a helper function hidden in the scope
@@ -45,20 +45,30 @@ const Vector = ((...args) => {
       return _root(this).get(this).coords;
     };
 
-    // x coordinate
-    set x(newX) {
-      this.coords[0] = newX;
-    };
-    get x() {
-      return this.coords[0];
+    set coords(newCoords) {
+      _root(this).get(this).coords = newCoords;
     };
 
-    // y coordinate
-    set y(newY) {
-      this.coords[1] = newY;
+    // single coordinate setter / getter
+    setAxis(axisNum, newValue) {
+      result = false;
+
+      try {
+        if (is(newValue, "Number")) {
+          this.coords[axisNum] = newValue;
+          result = true;
+        }
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+        return result;
+      }
     };
-    get y() {
-      return this.coords[1];
+
+    getAxis(axisNum) {
+      if (is(axisNum, "Number")) {
+        return this.coords[axisNum];
+      }
     };
 
     // calculate the length of this vector
@@ -80,156 +90,49 @@ const Vector = ((...args) => {
        * recall that a + b = b + a
        */
 
-      // if there is a vector to act on
-      if (vectorObj) {
-        // define our variable
-        let sums = Vector.operate(this, vectorObj, [this.vectorAdd]);
-        let result = false;
-
-        // if it is a vector instance
-        if (is(vectorObj, "Vector")) {
-          // point to its coords array
-          coords = vectorObj.coords;
-        // if it is an array
-        } else if (is(vectorObj, "Array")) {
-          // if the array is the correct length
-          if (vectorObj.length === this.coords.length) {
-            // point to the vector array itself
-            coords = vectorObj;
-          // throw an error requiring both vectors to inhabit the same space
-          } else {
-            throw new Error(`You can only perform operations on Vectors that reside in the same coordinate system.`);
-          }
-        }
-
-        // try to perform operations on the vectors
-        try {
-          // for each coordinate...
-          for (let c=0; c<coords.length; c++) {
-            // push in the sum of the two vector's values
-            sums.push(this.coords[c] + coords[c]);
-          }
-          // use the spread of the sums to create a new Vector instance
-          result = new Vector(...sums);
-        // catch the error, if any, and log it to the console
-        } catch(error) {
-          console.log(`ERROR: ${error}`);
-        // in any event, return the value of result
-        } finally {
-          return result;
-        }
-      }
+      return Vector.add(this, vectorObj);
     };
 
-    subt(vectorObj) {
+    sub(vectorObj) {
       /**
        * Subtract two vectors
        * vec1.subt(vec2) is equivalent to vec1 - vec2
        */
-      // if there is a vector to act on
-      if (vectorObj) {
-        // define our variables
-        let diffs = [];
-        let coords;
-        let result = false;
-        
-        // if it is a vector instance
-        if (is(vectorObj, "Vector")) {
-          // point to its coords array
-          coords = vectorObj.coords;
-        // if it is an array
-        } else if (is(vectorObj, "Array")) {
-          // if the array is the correct length
-          if (vectorObj.length === this.coords.length) {
-            // point to the vector array itself
-            coords = vectorObj;
-          // throw an error requiring both vectors to inhabit the same space
-          } else {
-            throw new Error(`You can only perform operations on Vectors that reside in the same coordinate system.`);
-          }
-        }
+      return Vector.sub(this, vectorObj);
+    };
 
-        // try to perform operations on the vectors
-        try {
-          // for each coordinate...
-          for (let c=0; c<coords.length; c++) {
-            // push in the sum of the two vector's values
-            diffs.push(this.coords[c] - coords[c]);
-          }
-          // use the spread of the sums to create a new Vector instance
-          result = new Vector(...diffs);
-        // catch the error, if any, and log it to the console
-        } catch(error) {
-          console.log(`ERROR: ${error}`);
-        // in any event, return the value of result
-        } finally {
-          return result;
-        }
-      }
-    }
-
-    mult(scalar) {
+    mul(scalar) {
       /**
        * vector multiplication by a scalar
        * recall that n * vec is equivalent to n * (vec.x, vec.y)
        */
-      let x = this._x, y = this._y;
-
-      if(typeof scalar === "number") {
-        return new Vector(x * scalar, y * scalar);
-      } else {
-        return false;
-      }
-    }
+       return Vector.mul(scalar, this);
+    };
 
     div(scalar) {
       /**
        * Divide a vector by a scalar
        * Recall that vec / n is equivalent to (vec.x, vec.y) / n
        */
-      let x = this._x, y = this._y;
-
-      // type check the input to make sure it's a scalar value
-      if(typeof scalar === "number") {
-        return new Vector(x / scalar, y / scalar);
-      } else {
-        return false;
-      }
-    }
+       return Vector.div(scalar, this);
+    };
 
     //
-    dot(vec) {
+    dot(vectorObj) {
       /**
        * Dot product of two vectors
        * Recall the dot product vec1 * vec2 is equivalent to:
        * (vec1.x * vec2.x) + (vec1.y * vec2.y)
        */
-      let x = this._x, y = this._y;
-      let result = false;
-
-      try {
-        // type checking
-        if(vec.constructor === Vector) {
-          result = ((x * vec._x) + (y * vec._y));
-        } else if(vec.constructor === Array && vec.length === 2) {
-          result = ((x * vec[0]) + (y * vec[1]));
-        }
-      } catch (error) {
-        console.log(`ERROR: ${error}`);
-      } finally {
-        return result;
-      }
-    }
+      return Vector.dot(this, vectorObj);
+    };
 
     normalize() {
       /**
        * A method to normalize a vector, i.e. returns the unit vector
        */
-      let x = this._x, y = this._y;
-      let mag = this.length;
-
-      return new Vector(x / mag, y / mag);
-    }
+      return Vector.normalize(this);
+    };
 
     /* Class Methods */
 
@@ -287,7 +190,10 @@ const Vector = ((...args) => {
       let result = false;
 
       try {
-        result = Vector.operate(v1, v2, [Vector.vectorAdd]);
+
+        let params = Vector.operate(v1, v2, [Vector.vectorAdd]);
+        result = new Vector(...params);
+
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
@@ -295,13 +201,16 @@ const Vector = ((...args) => {
         return result;
 
       }
-    }
+    };
 
     static sub(v1, v2) {
       let result = false;
 
       try {
-        result = Vector.operate(v1, v2, [Vector.vectorSub]);
+
+        let params = Vector.operate(v1, v2, [Vector.vectorSub]);
+        result = new Vector(...params);
+
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
@@ -309,7 +218,7 @@ const Vector = ((...args) => {
         return result;
 
       }
-    }
+    };
 
     static mul(scalar, vectorObj) {
       let result = false;
@@ -328,13 +237,17 @@ const Vector = ((...args) => {
           scaleArray.push(scalar);
         }
 
-        result = Vector.operate(vectorObj, scaleArray, [Vector.vectorMul]);
+        let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorMul]);
+        result = new Vector(...params);
+
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
+
         return result;
+
       }
-    }
+    };
 
     static div(scalar, vectorObj) {
       let result = false;
@@ -353,25 +266,34 @@ const Vector = ((...args) => {
           scaleArray.push(scalar);
         }
 
-        result = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+        let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+        result = new Vector(...params);
+
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
+
         return result;
+
       }
-    }
+    };
 
     static dot(v1, v2) {
       let result = false;
 
       try {
-        result = Vector.operate(v1, v2, [Vector.vectorMul, Vector.vectorAdd]);
+
+        let params = Vector.operate(v1, v2, [Vector.vectorMul, Vector.vectorAdd]);
+        result = new Vector(...params);
+
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
+
         return result;
+
       }
-    }
+    };
 
     static normalize(vectorObj) {
       let result = false;
@@ -389,28 +311,29 @@ const Vector = ((...args) => {
             scaleArray.push(magnitude);
           }
 
-          result = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+          let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+          result = new Vector(...params);
         }
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
         return result;
       }
-    }
+    };
 
-    static toVector(arr) {
+    static toVector(arrayObj) {
       let result = false;
 
       try {
-        if(arr.constructor === Array && arr.length === 2) {
-          result = new Vector(arr[0], arr[1]);
+        if(is(arrayObj, "Array") && arrayObj.length >= 2) {
+          result = new Vector(...arrayObj);
         }
       } catch (error) {
         console.log(`ERROR: ${error}`);
       } finally {
         return result;
       }
-    }
+    };
 
     /* Helper Methods */
 
@@ -419,17 +342,17 @@ const Vector = ((...args) => {
        * Convert a vector to a 1-dimensional array containing two elements
        * Format is [x,y]
        */
-      return [this._x, this._y];
-    }
+      return [...this.coords];
+    };
 
     toString() {
       /**
        * Format the vector as a string
        * Format is `(x, y)`
        */
-      return `(${this._x}, ${this._y})`;
+      return `(${this.coords.join(', ')})`;
     }
-  }
+  };
 })();
 
 module.exports = Vector;
