@@ -1,17 +1,24 @@
 /**
  * @name VectorJS
- * @description An implementation of 2D mathematical vectors in JavaScript using Cartesian coordinates.
+ * @description An implementation of 3D mathematical vectors in JavaScript using Cartesian coordinates.
  * @author Spike Burton
+ * @author Allen Woods
  */
 
+const Vector3d ((xNum, yNum, zNum) => {
+  const _root = function(objScope) {
+    objScope[ Object.getOwnPropertySymbols(objScope)[0] ]
+  };
+})();
 class Vector {
   /**
-   * A vector is defined here as a pair of X and Y coordinates with magnitude and direction.
+   * A vector is defined here as a pair of X, Y, and  Z coordinates with magnitude and direction.
    * Each operational method can accept either a Vector object or a 1-dimensional array
-   * containing two elements representing the X and Y coordinates.
+   * containing three elements representing the X, Y, and Z coordinates.
    *
    * @param {x} x
    * @param {y} y
+   * @param {z} z
    */
   constructor(x,y) {
     this._x = x;
