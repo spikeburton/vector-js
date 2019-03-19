@@ -178,7 +178,7 @@ const Vector = ((...args) => {
             }
             // reduce further if this is dot product or similar
             if (opFuncArray.length === 2) {
-              results.reduce(opFuncArray[1]);
+              results = results.reduce(opFuncArray[1]);
             }
           }
         } catch(error) {
