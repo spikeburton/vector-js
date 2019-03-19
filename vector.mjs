@@ -6,7 +6,7 @@
  **/
 
 // Import our improved type checker
-import is from 'is';
+import is from './is';
 
 // Declare our closure that returns the prototype of Vector
 const Vector = ((...args) => {
@@ -56,7 +56,7 @@ const Vector = ((...args) => {
 
     // single coordinate setter / getter
     setAxis(axisNum, newValue) {
-      result = false;
+      let result = false;
 
       try {
         if (is(newValue, "Number")) {
@@ -146,10 +146,10 @@ const Vector = ((...args) => {
     /* Class Methods */
 
     // Array reduce callbacks
-    static vectorAdd = (acc, cur) => acc + cur;
-    static vectorSub = (acc, cur) => acc - cur;
-    static vectorMul = (acc, cur) => acc * cur;
-    static vectorDiv = (acc, cur) => acc / cur;
+    static vectorAdd(acc, cur) { return acc + cur };
+    static vectorSub(acc, cur) { return acc - cur };
+    static vectorMul(acc, cur) { return acc * cur };
+    static vectorDiv(acc, cur) { return acc / cur };
 
     // Arithmetic operator function
     static operate(v1, v2, opFuncArray) {
