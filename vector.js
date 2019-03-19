@@ -135,6 +135,10 @@ const Vector = ((...args) => {
       return Vector.normalize(this);
     };
 
+    cross(vectorObj) {
+      return Vector.cross(this, vectorObj);
+    }
+
     /* Class Methods */
 
     // Array reduce callbacks
@@ -321,6 +325,33 @@ const Vector = ((...args) => {
         return result;
       }
     };
+
+    static cross(v1, v2) {
+      let result = false;
+
+      try {
+        v1 = is(v1, "Array") ? Vector.toVector(v1) : v1;
+        v2 = is(v2, "Array") ? Vector.toVector(v2) : v2;
+
+        let a = v1.coords;
+        let b = v2.coords;
+
+        if (a.length === b.length && a.length >= 3) {
+          let params = [
+            a[1]*b[2] - a[2]*b[1],
+            a[2]*b[0] - a[0]*b[2],
+            a[0]*b[1] - a[1]*b[0]
+          ]
+          result = new Vector(...params)
+        } else {
+          throw new Error('Cross product is only available in three or more dimensions.');
+        }
+      } catch (error) {
+        console.log(`ERROR: ${error}`);
+      } finally {
+        return result;
+      }
+    }
 
     static toVector(arrayObj) {
       let result = false;
