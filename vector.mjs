@@ -6,7 +6,7 @@
  **/
 
 // Import our improved type checker
-import is from './is';
+import is from './is.mjs';
 
 // Declare our closure that returns the prototype of Vector
 const Vector = ((...args) => {
@@ -84,7 +84,7 @@ const Vector = ((...args) => {
        * simply calculates the magnitude of the vector based on the following equation:
        * length^2 = x^2 + y^2
        */
-      return Math.sqrt(this.coords.reduce((acc, cur) => acc + cur ** 2));
+      return Math.sqrt(this.coords.reduce((acc, cur) => acc + cur ** 2, 0));
     };
 
     /* Instance Methods */
@@ -178,11 +178,11 @@ const Vector = ((...args) => {
             // iterate over the coordinates in the vectors
             for (let c=0; c<a.length; c++) {
               // store the result of the operation performed inside opFunc
-              results.push([ a[c], b[c] ].reduce(opFuncArray[0]));
+              results.push([ a[c], b[c] ].reduce(opFuncArray[0], 0));
             }
             // reduce further if this is dot product or similar
             if (opFuncArray.length === 2) {
-              results = results.reduce(opFuncArray[1]);
+              results = results.reduce(opFuncArray[1], 0);
             }
           }
         } catch(error) {

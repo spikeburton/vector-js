@@ -1,4 +1,4 @@
-import Vector from  './vector';
+import Vector from  './vector.mjs';
 
 let vec1 = new Vector(1,2);
 console.log(vec1.length);
