@@ -22,7 +22,7 @@ const Vector = ((...args) => {
 
     // The _root method effectively replaces keyword `this`
     // when accessing the coords property
-    return objScope[ Object.getOwnPropertySymbols(objScope)['_wm'] ];
+    return objScope[ Object.getOwnPropertySymbols(objScope)[0] ];
   };
 
   return class Vector {
