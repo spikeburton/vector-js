@@ -74,61 +74,99 @@ const Vector = ((...args) => {
     };
 
     /* Instance Methods */
-
+ 
     add(vectorObj) {
       /**
        * add two vectors
        * recall that a + b = b + a
        */
 
-      let dimensions = [];
-      let 
+      // if there is a vector to act on
       if (vectorObj) {
+        // define our variables
+        let sums = [];
+        let coords;
+        let result = false;
+
+        // if it is a vector instance
         if (is(vectorObj, "Vector")) {
-          
-
+          // point to its coords array
+          coords = vectorObj.coords;
+        // if it is an array
         } else if (is(vectorObj, "Array")) {
+          // if the array is the correct length
+          if (vectorObj.length === this.coords.length) {
+            // point to the vector array itself
+            coords = vectorObj;
+          // throw an error requiring both vectors to inhabit the same space
+          } else {
+            throw new Error(`You can only perform operations on Vectors that reside in the same coordinate system.`);
+          }
+        }
 
+        // try to perform operations on the vectors
+        try {
+          // for each coordinate...
+          for (let c=0; c<coords.length; c++) {
+            // push in the sum of the two vector's values
+            sums.push(this.coords[c] + coords[c]);
+          }
+          // use the spread of the sums to create a new Vector instance
+          result = new Vector(...sums);
+        // catch the error, if any, and log it to the console
+        } catch(error) {
+          console.log(`ERROR: ${error}`);
+        // in any event, return the value of result
+        } finally {
+          return result;
         }
       }
+    };
 
-
-      let x = this._x, y = this._y;
-      let result = false;
-
-      try {
-        // do some type checking here
-        if(vec.constructor === Vector) {
-          result = new Vector(x + vec._x, y + vec._y);
-        } else if(vec.constructor === Array && vec.length === 2) {
-          result = new Vector(x + vec[0], y + vec[1]);
-        }
-      } catch (error) {
-        console.log(`ERROR: ${error}`);
-      } finally {
-        return result;
-      }
-    }
-
-    subt(vec) {
+    subt(vectorObj) {
       /**
        * Subtract two vectors
        * vec1.subt(vec2) is equivalent to vec1 - vec2
        */
-      let x = this._x, y = this._y;
-      let result = false;
-
-      try {
-        // type checking
-        if(vec.constructor === Vector) {
-          result = new Vector(x - vec._x, y - vec._y);
-        } else if(vec.constructor === Array && vec.length === 2) {
-          result = new Vector(x - vec[0], y - vec[1]);
+      // if there is a vector to act on
+      if (vectorObj) {
+        // define our variables
+        let diffs = [];
+        let coords;
+        let result = false;
+        
+        // if it is a vector instance
+        if (is(vectorObj, "Vector")) {
+          // point to its coords array
+          coords = vectorObj.coords;
+        // if it is an array
+        } else if (is(vectorObj, "Array")) {
+          // if the array is the correct length
+          if (vectorObj.length === this.coords.length) {
+            // point to the vector array itself
+            coords = vectorObj;
+          // throw an error requiring both vectors to inhabit the same space
+          } else {
+            throw new Error(`You can only perform operations on Vectors that reside in the same coordinate system.`);
+          }
         }
-      } catch (error) {
-        console.log(`ERROR: ${error}`);
-      } finally {
-        return result;
+
+        // try to perform operations on the vectors
+        try {
+          // for each coordinate...
+          for (let c=0; c<coords.length; c++) {
+            // push in the sum of the two vector's values
+            diffs.push(this.coords[c] - coords[c]);
+          }
+          // use the spread of the sums to create a new Vector instance
+          result = new Vector(...diffs);
+        // catch the error, if any, and log it to the console
+        } catch(error) {
+          console.log(`ERROR: ${error}`);
+        // in any event, return the value of result
+        } finally {
+          return result;
+        }
       }
     }
 
@@ -196,6 +234,50 @@ const Vector = ((...args) => {
     }
 
     /* Class Methods */
+
+    // arithmetic operator function
+    static operate(v1, v2, opFuncArray, scalar) {
+      // only proceed if all arguments have been passed
+      if (v1 && v2 && opFuncArray) {
+        // auto format incoming data as vectors
+        v1 = (is(v1, "Array")) ? Vector.toVector(v1) : v1;
+        v2 = (is(v2, "Array")) ? Vector.toVector(v2) : v2;
+
+        // default to false for return value
+        let results = false;
+        // handle errors
+        try {
+          // point to the coordinate values of the vectors
+          let a = v1.coords;
+          let b = v2.coords;
+
+          // if the vectors are from different coordinate systems
+          if((a.length + b.length) % 2) {
+            // prevent further action
+            throw new Error(`Operations can only be performed on vectors that inhabit the same coordinate system.`)
+          } else {
+            // format our return value as an array
+            results = [];
+
+            // iterate over the coordinates in the vectors
+            for (let c=0; c<a.length; c++) {
+              // store the result of the operation performed inside opFunc
+              results.push([ a[c], b[c] ].reduce(opFuncArray[0]));
+            }
+            // reduce further if this is dot product or similar
+            if (opFuncArray.length === 2) {
+              results.reduce(opFuncArray[1]);
+            }
+          }
+        } catch(error) {
+          // log any error we find, if any
+          console.log(`ERROR: ${error}`);
+        } finally {
+          // return the results
+          return results;
+        }
+      }
+    }
 
     static add(v1, v2) {
       let result = false;
