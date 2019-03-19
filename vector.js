@@ -37,8 +37,12 @@ const Vector = ((...args) => {
     constructor(...args) {
       this[Symbol('_wm')] = new WeakMap();
       
-      // bind our variable number of coordinates to the WeakMap 
-      _root(this).set(this, {coords: [...args]});
+      if ([...args].length < 2) {
+        throw new Error('Vectors must reside in at least 2 dimensions.');
+      } else {
+        // bind our variable number of coordinates to the WeakMap 
+        _root(this).set(this, {coords: [...args]});
+      }
     };
 
     // return coordinates array
