@@ -1,5 +1,5 @@
-import Vector from './vector'
-import is from './is'
+// import Vector from './vector'
+// import is from './is'
 
 let vector1 = new Vector(1,2,3)
 let vector2 = new Vector(4,5,6)

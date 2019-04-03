@@ -1,4 +1,4 @@
-export default function is (dataObj, dataTypeStr) {
+function is (dataObj, dataTypeStr) {
   var returnValue = false
   let a = function (val) { return val }
 
@@ -53,3 +53,5 @@ export default function is (dataObj, dataTypeStr) {
   }
   return a(returnValue)
 }
+
+// export default is
