@@ -54,4 +54,4 @@ function is (dataObj, dataTypeStr) {
   return a(returnValue)
 }
 
-// export default is
+export default is

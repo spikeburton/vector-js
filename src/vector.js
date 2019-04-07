@@ -1,4 +1,4 @@
-// import is from './is'
+import is from './is'
 
 /**
  * @name VectorJS
@@ -420,7 +420,7 @@ class TensionVector extends Vector {
   set b (bValue) { this.bParam = (bValue < 0) ? 0 : (bValue > 1) ? 1 : bValue }
 }
 
-// export default {
-//   Vector,
-//   TensionVector
-// }
+export default {
+  Vector,
+  TensionVector
+}
