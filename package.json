@@ -1,0 +1,24 @@
+{
+  "name": "vector-js",
+  "version": "1.0.0",
+  "description": "An implementation of mathematical vectors in JavaScript",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spikeburton/vector-js.git"
+  },
+  "keywords": [
+    "vector",
+    "javascript",
+    "math"
+  ],
+  "author": "Spike Burton & Allen Woods",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spikeburton/vector-js/issues"
+  },
+  "homepage": "https://github.com/spikeburton/vector-js#readme"
+}
