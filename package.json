@@ -1,5 +1,5 @@
 {
-  "name": "vector-js",
+  "name": "@nullbyte/vector-js",
   "version": "1.0.0",
   "description": "An implementation of mathematical vectors in JavaScript",
   "private": true,
