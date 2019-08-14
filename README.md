@@ -1,7 +1,28 @@
 # VectorJS
-An implementation of 2D mathematical vectors in JavaScript using Cartesian coordinates.
 
-A vector is defined here as a pair of X and Y coordinates in Cartesian space which has both a magnitude and a direction. VectorJS implements functionality to represent a vector as a 1-dimensional array containing two elements as input for each method.
+An implementation of mathematical vectors in JavaScript. The vector space is n-dimensional, with support for cross product and tension vectors.
 
-## Future Implementation
-This project may in the future include implementation for 3D vectors.
+A vector is defined here as a set of ordered coordinates in the vector space of cardinality **n** which has both a magnitude and a direction. VectorJS implements functionality to represent a vector as a 1-dimensional array containing **n** elements as input for each method.
+
+## Install
+
+```sh
+npm i @nullbyte/vector-js
+```
+
+## Usage
+
+```js
+const { Vector, TensionVector } = require('@nullbyte/vector-js');
+
+const v1 = new Vector(1, 2, 3);
+const v2 = new Vector(2, 4, 6);
+
+// Adding two vectors
+// OUTPUT: (3, 6, 9)
+console.log(v1.add(v2).toString());
+
+// Using an array of coordinates
+// OUTPUT: (3, 6, 9)
+console.log(v1.add([2, 4, 6]).toString());
+```
