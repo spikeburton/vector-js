@@ -2,6 +2,7 @@
   "name": "@nullbyte/vector-js",
   "version": "1.0.3",
   "description": "An implementation of mathematical vectors in JavaScript",
+  "main": "src/vector.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
