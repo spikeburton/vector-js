@@ -7,13 +7,13 @@ A vector is defined here as a set of ordered coordinates in the vector space of 
 ## Install
 
 ```sh
-npm i @nullbyte/vector-js
+npm i @glazier/vector-js
 ```
 
 ## Usage
 
 ```js
-const { Vector, TensionVector } = require('@nullbyte/vector-js');
+const { Vector, TensionVector } = require('@glazier/vector-js');
 
 const v1 = new Vector(1, 2, 3);
 const v2 = new Vector(2, 4, 6);
