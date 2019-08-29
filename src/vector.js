@@ -186,13 +186,15 @@ class Vector {
             a = i > 0 ? results : a;
             results = i > 0 ? [] : results;
 
+            let opName = operationsArray[i];
+
             for (let j = 0; j < Math.max(m, n); j++) {
               if (m === 1) {
-                results.push(operationsArray[i](a[j], b[j]));
+                results.push(Vector[`vector${opName}`](a[j], b[j]));
               } else if (m !== n) {
-                results.push(operationsArray[i](a[j], b[0]));
+                results.push(Vector[`vector${opName}`](a[j], b[0]));
               } else {
-                results.push(operationsArray[i](a[j], b[j]));
+                results.push(Vector[`vector${opName}`](a[j], b[j]));
               }
             }
           }
@@ -208,7 +210,7 @@ class Vector {
     let result = false;
 
     try {
-      let params = Vector.operate(v1, v2, [Vector.vectorAdd]);
+      let params = Vector.operate(v1, v2, ['Add']);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
@@ -220,7 +222,7 @@ class Vector {
     let result = false;
 
     try {
-      let params = Vector.operate(v1, v2, [Vector.vectorSub]);
+      let params = Vector.operate(v1, v2, ['Sub']);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
@@ -232,7 +234,7 @@ class Vector {
     let result = false;
 
     try {
-      let params = Vector.operate(v1, scalar, [Vector.vectorMul]);
+      let params = Vector.operate(v1, scalar, ['Mul']);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
@@ -244,7 +246,7 @@ class Vector {
     let result = false;
 
     try {
-      let params = Vector.operate(v1, scalar, [Vector.vectorDiv]);
+      let params = Vector.operate(v1, scalar, ['Div']);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
@@ -256,7 +258,7 @@ class Vector {
     let result = false;
 
     try {
-      let product = Vector.operate(v1, v2, [Vector.vectorMul]);
+      let product = Vector.operate(v1, v2, ['Mul']);
 
       result = product.reduce((a, c) => a + c, 0);
     } catch (error) {
