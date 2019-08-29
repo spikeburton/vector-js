@@ -96,20 +96,20 @@ class Vector {
     return Vector.sub(this, vectorObj);
   }
 
-  mul(vectorObj) {
+  mul(scalar) {
     /**
      * vector multiplication by a vector (or scalar)
      * recall that n * vec is equivalent to n * (vec.x, vec.y)
      */
-    return Vector.mul(this, vectorObj);
+    return Vector.mul(this, scalar);
   }
 
-  div(vectorObj) {
+  div(scalar) {
     /**
      * Divide a vector by a vector (or scalar)
      * Recall that vec / n is equivalent to (vec.x, vec.y) / n
      */
-    return Vector.div(this, vectorObj);
+    return Vector.div(this, scalar);
   }
 
   //
@@ -152,6 +152,7 @@ class Vector {
   static operate(v1, v2, operationsArray) {
     if (v1 && v2 && operationsArray) {
       v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
+      v2 = is(v2, 'Number') ? [v2] : v2;
       v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
 
       let results = [];
@@ -174,7 +175,9 @@ class Vector {
           n = 1;
         } else {
           if (a.length !== b.length) {
-            m = Math.min(a.length, b.length);
+            throw new Error(
+              'Vectors must contain the same number of dimensions.'
+            );
           } else {
             m = a.length;
           }
@@ -231,11 +234,11 @@ class Vector {
     }
   }
 
-  static mul(v1, v2) {
+  static mul(v1, scalar) {
     let result = false;
 
     try {
-      let params = Vector.operate(v1, v2, [Vector.vectorMul]);
+      let params = Vector.operate(v1, scalar, [Vector.vectorMul]);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
@@ -244,11 +247,11 @@ class Vector {
     }
   }
 
-  static div(v1, v2) {
+  static div(v1, scalar) {
     let result = false;
 
     try {
-      let params = Vector.operate(v1, v2, [Vector.vectorDiv]);
+      let params = Vector.operate(v1, scalar, [Vector.vectorDiv]);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
