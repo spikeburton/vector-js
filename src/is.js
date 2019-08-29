@@ -60,8 +60,6 @@ function is(dataObj, dataTypeStr) {
     }
   } catch (e) {
     console.log(`ERROR: ${e}`);
-  } finally {
-    // Not permitted by StandardJS / ESLint
   }
   return a(returnValue);
 }

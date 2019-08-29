@@ -48,8 +48,6 @@ class Vector {
       }
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
@@ -152,7 +150,8 @@ class Vector {
   static operate(v1, v2, operationsArray) {
     if (v1 && v2 && operationsArray) {
       v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
-      v2 = is(v2, 'Number') ? [v2] : v2;
+      // We convert scalar values to temporary vectors internally
+      v2 = is(v2, 'Number') ? Vector.toVector([v2]) : v2;
       v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
 
       let results = [];
@@ -160,8 +159,6 @@ class Vector {
       try {
         let a = v1.coords;
         let b = v2.coords;
-
-        console.log(`${a.length}, ${b.length}`);
 
         let m = false;
         let n = false;
@@ -200,11 +197,10 @@ class Vector {
             }
           }
         }
-      } catch (err) {
-        console.error(`ERROR: ${err}`);
-      } finally {
-        return results;
+      } catch (error) {
+        console.error(`ERROR: ${error}`);
       }
+      return results;
     }
   }
 
@@ -216,9 +212,8 @@ class Vector {
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
     }
+    return result;
   }
 
   static sub(v1, v2) {
@@ -229,9 +224,8 @@ class Vector {
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
     }
+    return result;
   }
 
   static mul(v1, scalar) {
@@ -242,9 +236,8 @@ class Vector {
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
     }
+    return result;
   }
 
   static div(v1, scalar) {
@@ -255,9 +248,8 @@ class Vector {
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
     }
+    return result;
   }
 
   static dot(v1, v2) {
@@ -269,9 +261,8 @@ class Vector {
       result = product.reduce((a, c) => a + c, 0);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
     }
+    return result;
   }
 
   static normalize(vectorObj) {
@@ -295,9 +286,8 @@ class Vector {
       }
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
     }
+    return result;
   }
 
   static cross(v1, v2) {
@@ -331,23 +321,21 @@ class Vector {
       }
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
     }
+    return result;
   }
 
   static toVector(arrayObj) {
     let result = false;
 
     try {
-      if (is(arrayObj, 'Array') && arrayObj.length >= 2) {
+      if (is(arrayObj, 'Array')) {
         result = new Vector(...arrayObj);
       }
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      return result;
     }
+    return result;
   }
 
   /* Helper Methods */
