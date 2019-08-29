@@ -1,6 +1,5 @@
 # Ignore the stuff that node generates
-*.log*
-
 node_modules
 
+*.log*
 *.env
