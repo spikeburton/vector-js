@@ -269,19 +269,10 @@ class Vector {
     let result = false;
 
     try {
-      let scaleArray = [];
-      let magnitude;
-      let coords;
-
       if (is(vectorObj, 'Vector')) {
-        coords = vectorObj.coords;
-        magnitude = vectorObj.length;
-
-        for (let i = 0; i < coords.length; i++) {
-          scaleArray.push(magnitude);
-        }
-
-        let params = Vector.operate(vectorObj, scaleArray, [Vector.vectorDiv]);
+        let params = Vector.operate(vectorObj, vectorObj.length, [
+          Vector.vectorDiv
+        ]);
         result = new Vector(...params);
       }
     } catch (error) {
