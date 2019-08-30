@@ -1,3 +1,5 @@
+// NOTE: ordered arguments have been reinstated to allow for backward compatibility.
+
 const is = require('./is');
 
 /**
@@ -99,7 +101,7 @@ class Vector {
      * vector multiplication by a vector (or scalar)
      * recall that n * vec is equivalent to n * (vec.x, vec.y)
      */
-    return Vector.mul(this, scalar);
+    return Vector.mul(scalar, this);
   }
 
   div(scalar) {
@@ -107,7 +109,7 @@ class Vector {
      * Divide a vector by a vector (or scalar)
      * Recall that vec / n is equivalent to (vec.x, vec.y) / n
      */
-    return Vector.div(this, scalar);
+    return Vector.div(scalar, this);
   }
 
   //
