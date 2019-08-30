@@ -48,8 +48,6 @@ class Vector {
       }
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
@@ -91,25 +89,25 @@ class Vector {
   sub(vectorObj) {
     /**
      * Subtract two vectors
-     * vec1.subt(vec2) is equivalent to vec1 - vec2
+     * vec1.sub(vec2) is equivalent to vec1 - vec2
      */
     return Vector.sub(this, vectorObj);
   }
 
   mul(scalar) {
     /**
-     * vector multiplication by a scalar
+     * vector multiplication by a vector (or scalar)
      * recall that n * vec is equivalent to n * (vec.x, vec.y)
      */
-    return Vector.mul(scalar, this);
+    return Vector.mul(this, scalar);
   }
 
   div(scalar) {
     /**
-     * Divide a vector by a scalar
+     * Divide a vector by a vector (or scalar)
      * Recall that vec / n is equivalent to (vec.x, vec.y) / n
      */
-    return Vector.div(scalar, this);
+    return Vector.div(this, scalar);
   }
 
   //
@@ -135,69 +133,75 @@ class Vector {
 
   /* Class Methods */
 
-  // Array reduce callbacks
-  static vectorAdd(acc, cur) {
-    return acc + cur;
+  static vectorAdd(a, b) {
+    return +parseFloat(a + b).toFixed(16);
   }
-  static vectorSub(acc, cur) {
-    return acc - cur;
+  static vectorSub(a, b) {
+    return +parseFloat(a - b).toFixed(16);
   }
-  static vectorMul(acc, cur) {
-    return acc * cur;
+  static vectorMul(a, b) {
+    return +parseFloat(a * b).toFixed(16);
   }
-  static vectorDiv(acc, cur) {
-    return acc / cur;
+  static vectorDiv(a, b) {
+    return +parseFloat(a / b).toFixed(16);
   }
 
-  // Arithmetic operator function
-  static operate(v1, v2, opFuncArray, useOne = false) {
-    // only proceed if all arguments have been passed
-    if (v1 && v2 && opFuncArray) {
-      // auto format incoming data as vectors
+  // New arithmetic operator function
+  static operate(v1, v2, operationsArray) {
+    if (v1 && v2 && operationsArray) {
       v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
+      // We convert scalar values to temporary vectors internally
+      v2 = is(v2, 'Number') ? Vector.toVector([v2]) : v2;
       v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
 
-      // default to false for return value
-      let results = false;
-      // handle errors
+      let results = [];
+
       try {
-        // point to the coordinate values of the vectors
         let a = v1.coords;
         let b = v2.coords;
 
-        // if the vectors are from different coordinate systems
-        if ((a.length + b.length) % 2) {
-          // prevent further action
-          throw new Error(
-            `Operations can only be performed on vectors that inhabit the same coordinate system.`
-          );
-        } else {
-          // format our return value as an array
-          results = [];
+        let m = false;
+        let n = false;
 
-          // iterate over the coordinates in the vectors
-          for (let c = 0; c < a.length; c++) {
-            // Store the result of the operation performed inside opFunc.
-
-            // We need to programmatically define the init value because
-            // multiplication requires 1 as the init value, not zero.
-            results.push(
-              [a[c], b[c]].reduce(opFuncArray[0].f, opFuncArray[0].i)
-            );
+        if (a.length === 1 || b.length === 1) {
+          if (a.length === 1) {
+            m = 1;
+          } else if (b.length === 1) {
+            m = a.length;
           }
-          // reduce further if this is dot product or similar
-          if (opFuncArray.length === 2) {
-            results = results.reduce(opFuncArray[1].f, opFuncArray[1].i);
+          n = 1;
+        } else {
+          if (a.length !== b.length) {
+            throw new Error(
+              'Vectors must contain the same number of dimensions.'
+            );
+          } else {
+            m = a.length;
+          }
+          n = m;
+        }
+
+        if (!isNaN(m) && !isNaN(n)) {
+          for (let i = 0; i < operationsArray.length; i++) {
+            a = i > 0 ? results : a;
+            results = i > 0 ? [] : results;
+
+            let opName = operationsArray[i];
+
+            for (let j = 0; j < Math.max(m, n); j++) {
+              if (m === 1) {
+                results.push(Vector[`vector${opName}`](a[j], b[j]));
+              } else if (m !== n) {
+                results.push(Vector[`vector${opName}`](a[j], b[0]));
+              } else {
+                results.push(Vector[`vector${opName}`](a[j], b[j]));
+              }
+            }
           }
         }
       } catch (error) {
-        // log any error we find, if any
-        console.log(`ERROR: ${error}`);
-      } finally {
-        // do nothing
+        console.error(`ERROR: ${error}`);
       }
-
-      // return the results
       return results;
     }
   }
@@ -206,12 +210,10 @@ class Vector {
     let result = false;
 
     try {
-      let params = Vector.operate(v1, v2, [{ f: Vector.vectorAdd, i: 0 }]);
+      let params = Vector.operate(v1, v2, ['Add']);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
@@ -220,70 +222,34 @@ class Vector {
     let result = false;
 
     try {
-      let params = Vector.operate(v1, v2, [{ f: Vector.vectorSub, i: 0 }]);
+      let params = Vector.operate(v1, v2, ['Sub']);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
 
-  static mul(scalar, vectorObj) {
+  static mul(scalar, v1) {
     let result = false;
 
     try {
-      let scaleArray = [];
-      let coords;
-
-      if (is(vectorObj, 'Vector')) {
-        coords = vectorObj.coords;
-      } else if (is(vectorObj, 'Array')) {
-        coords = vectorObj;
-      }
-
-      for (let i = 0; i < coords.length; i++) {
-        scaleArray.push(scalar);
-      }
-
-      let params = Vector.operate(vectorObj, scaleArray, [
-        { f: Vector.vectorMul, i: 1 }
-      ]);
+      let params = Vector.operate(v1, scalar, ['Mul']);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
 
-  static div(scalar, vectorObj) {
+  static div(scalar, v1) {
     let result = false;
 
     try {
-      let scaleArray = [];
-      let coords;
-
-      if (is(vectorObj, 'Vector')) {
-        coords = vectorObj.coords;
-      } else if (is(vectorObj, 'Array')) {
-        coords = vectorObj;
-      }
-
-      for (let i = 0; i < coords.length; i++) {
-        scaleArray.push(scalar);
-      }
-
-      let params = Vector.operate(vectorObj, scaleArray, [
-        { f: Vector.vectorDiv, i: 1 }
-      ]);
+      let params = Vector.operate(v1, scalar, ['Div']);
       result = new Vector(...params);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
@@ -292,15 +258,11 @@ class Vector {
     let result = false;
 
     try {
-      let product = Vector.operate(v1, v2, [
-        { f: Vector.vectorMul, i: 1 },
-        { f: Vector.vectorAdd, i: 0 }
-      ]);
-      result = product;
+      let product = Vector.operate(v1, v2, ['Mul']);
+
+      result = product.reduce((a, c) => a + c, 0);
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
@@ -309,27 +271,14 @@ class Vector {
     let result = false;
 
     try {
-      let scaleArray = [];
-      let magnitude;
-      let coords;
-
       if (is(vectorObj, 'Vector')) {
-        coords = vectorObj.coords;
-        magnitude = vectorObj.length;
-
-        for (let i = 0; i < coords.length; i++) {
-          scaleArray.push(magnitude);
-        }
-
-        let params = Vector.operate(vectorObj, scaleArray, [
-          { f: Vector.vectorDiv, i: 1 }
+        let params = Vector.operate(vectorObj, vectorObj.length, [
+          Vector.vectorDiv
         ]);
         result = new Vector(...params);
       }
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
@@ -346,9 +295,18 @@ class Vector {
 
       if (a.length === b.length && a.length === 3) {
         let params = [
-          a[1] * b[2] - a[2] * b[1],
-          a[2] * b[0] - a[0] * b[2],
-          a[0] * b[1] - a[1] * b[0]
+          Vector.vectorSub(
+            Vector.vectorMul(a[1], b[2]),
+            Vector.vectorMul(a[2], b[1])
+          ),
+          Vector.vectorSub(
+            Vector.vectorMul(a[2], b[0]),
+            Vector.vectorMul(a[0], b[2])
+          ),
+          Vector.vectorSub(
+            Vector.vectorMul(a[0], b[1]),
+            Vector.vectorMul(a[1], b[0])
+          )
         ];
         result = new Vector(...params);
       } else {
@@ -356,8 +314,6 @@ class Vector {
       }
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
@@ -366,13 +322,11 @@ class Vector {
     let result = false;
 
     try {
-      if (is(arrayObj, 'Array') && arrayObj.length >= 2) {
+      if (is(arrayObj, 'Array')) {
         result = new Vector(...arrayObj);
       }
     } catch (error) {
       console.log(`ERROR: ${error}`);
-    } finally {
-      // do nothing
     }
     return result;
   }
