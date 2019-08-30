@@ -47,7 +47,7 @@ class Vector {
         result = true;
       }
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -156,52 +156,47 @@ class Vector {
 
       let results = [];
 
-      try {
-        let a = v1.coords;
-        let b = v2.coords;
+      let a = v1.coords;
+      let b = v2.coords;
 
-        let m = false;
-        let n = false;
+      let m = false;
+      let n = false;
 
-        if (a.length === 1 || b.length === 1) {
-          if (a.length === 1) {
-            m = 1;
-          } else if (b.length === 1) {
-            m = a.length;
-          }
-          n = 1;
-        } else {
-          if (a.length !== b.length) {
-            throw new Error(
-              'Vectors must contain the same number of dimensions.'
-            );
-          } else {
-            m = a.length;
-          }
-          n = m;
+      if (a.length === 1 || b.length === 1) {
+        if (a.length === 1) {
+          m = 1;
+        } else if (b.length === 1) {
+          m = a.length;
         }
+        n = 1;
+      } else {
+        if (a.length !== b.length) {
+          throw new Error('Vectors must inhabit the same coordinate space.');
+        } else {
+          m = a.length;
+        }
+        n = m;
+      }
 
-        if (!isNaN(m) && !isNaN(n)) {
-          for (let i = 0; i < operationsArray.length; i++) {
-            a = i > 0 ? results : a;
-            results = i > 0 ? [] : results;
+      if (!isNaN(m) && !isNaN(n)) {
+        for (let i = 0; i < operationsArray.length; i++) {
+          a = i > 0 ? results : a;
+          results = i > 0 ? [] : results;
 
-            let opName = operationsArray[i];
+          let opName = operationsArray[i];
 
-            for (let j = 0; j < Math.max(m, n); j++) {
-              if (m === 1) {
-                results.push(Vector[`vector${opName}`](a[j], b[j]));
-              } else if (m !== n) {
-                results.push(Vector[`vector${opName}`](a[j], b[0]));
-              } else {
-                results.push(Vector[`vector${opName}`](a[j], b[j]));
-              }
+          for (let j = 0; j < Math.max(m, n); j++) {
+            if (m === 1) {
+              results.push(Vector[`vector${opName}`](a[j], b[j]));
+            } else if (m !== n) {
+              results.push(Vector[`vector${opName}`](a[j], b[0]));
+            } else {
+              results.push(Vector[`vector${opName}`](a[j], b[j]));
             }
           }
         }
-      } catch (error) {
-        console.error(`ERROR: ${error}`);
       }
+
       return results;
     }
   }
@@ -213,7 +208,7 @@ class Vector {
       let params = Vector.operate(v1, v2, ['Add']);
       result = new Vector(...params);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -225,7 +220,7 @@ class Vector {
       let params = Vector.operate(v1, v2, ['Sub']);
       result = new Vector(...params);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -237,7 +232,7 @@ class Vector {
       let params = Vector.operate(v1, scalar, ['Mul']);
       result = new Vector(...params);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -249,7 +244,7 @@ class Vector {
       let params = Vector.operate(v1, scalar, ['Div']);
       result = new Vector(...params);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -262,7 +257,7 @@ class Vector {
 
       result = product.reduce((a, c) => a + c, 0);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -276,7 +271,7 @@ class Vector {
         result = new Vector(...params);
       }
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -311,7 +306,7 @@ class Vector {
         throw new Error('Cross product is only available in three dimensions.');
       }
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -324,7 +319,7 @@ class Vector {
         result = new Vector(...arrayObj);
       }
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
