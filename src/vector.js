@@ -47,7 +47,7 @@ class Vector {
         result = true;
       }
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -208,7 +208,7 @@ class Vector {
       let params = Vector.operate(v1, v2, ['Add']);
       result = new Vector(...params);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -220,7 +220,7 @@ class Vector {
       let params = Vector.operate(v1, v2, ['Sub']);
       result = new Vector(...params);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -232,7 +232,7 @@ class Vector {
       let params = Vector.operate(v1, scalar, ['Mul']);
       result = new Vector(...params);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -244,7 +244,7 @@ class Vector {
       let params = Vector.operate(v1, scalar, ['Div']);
       result = new Vector(...params);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -257,7 +257,7 @@ class Vector {
 
       result = product.reduce((a, c) => a + c, 0);
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -271,7 +271,7 @@ class Vector {
         result = new Vector(...params);
       }
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -306,7 +306,7 @@ class Vector {
         throw new Error('Cross product is only available in three dimensions.');
       }
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
@@ -319,7 +319,7 @@ class Vector {
         result = new Vector(...arrayObj);
       }
     } catch (error) {
-      console.log(`ERROR: ${error}`);
+      console.error(`ERROR: ${error}`);
     }
     return result;
   }
