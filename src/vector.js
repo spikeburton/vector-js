@@ -99,7 +99,7 @@ class Vector {
      * vector multiplication by a vector (or scalar)
      * recall that n * vec is equivalent to n * (vec.x, vec.y)
      */
-    return Vector.mul(this, scalar);
+    return Vector.mul(scalar, this);
   }
 
   div(scalar) {
@@ -107,7 +107,7 @@ class Vector {
      * Divide a vector by a vector (or scalar)
      * Recall that vec / n is equivalent to (vec.x, vec.y) / n
      */
-    return Vector.div(this, scalar);
+    return Vector.div(scalar, this);
   }
 
   //
@@ -272,9 +272,7 @@ class Vector {
 
     try {
       if (is(vectorObj, 'Vector')) {
-        let params = Vector.operate(vectorObj, vectorObj.length, [
-          Vector.vectorDiv
-        ]);
+        let params = Vector.operate(vectorObj, vectorObj.length, ['Div']);
         result = new Vector(...params);
       }
     } catch (error) {
