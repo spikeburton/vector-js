@@ -230,7 +230,7 @@ class Vector {
     return result;
   }
 
-  static mul(v1, scalar) {
+  static mul(scalar, v1) {
     let result = false;
 
     try {
@@ -242,7 +242,7 @@ class Vector {
     return result;
   }
 
-  static div(v1, scalar) {
+  static div(scalar, v1) {
     let result = false;
 
     try {
