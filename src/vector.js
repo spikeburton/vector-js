@@ -274,9 +274,7 @@ class Vector {
 
     try {
       if (is(vectorObj, 'Vector')) {
-        let params = Vector.operate(vectorObj, vectorObj.length, [
-          Vector.vectorDiv
-        ]);
+        let params = Vector.operate(vectorObj, vectorObj.length, ['Div']);
         result = new Vector(...params);
       }
     } catch (error) {
