@@ -1,24 +1,37 @@
 {
   "name": "@glazier/vector-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An implementation of mathematical vectors in JavaScript",
   "main": "src/vector.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/spikeburton/vector-js.git"
   },
   "keywords": [
+    "vector-js",
     "vector",
+    "vectors",
     "javascript",
-    "math"
+    "math",
+    "mathematics",
+    "linear algebra",
+    "array",
+    "array normal"
   ],
-  "author": "Spike Burton & Allen Woods",
+  "authors": [
+    "Spike Burton <spikeburton@icloud.com> (https://github.com/spikeburton)",
+    "Allen Woods <allen@thesupertask.com> (https://github.com/allen-woods)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/spikeburton/vector-js/issues"
   },
-  "homepage": "https://github.com/spikeburton/vector-js#readme"
+  "homepage": "https://github.com/spikeburton/vector-js#readme",
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2"
+  }
 }

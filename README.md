@@ -4,11 +4,20 @@ An implementation of mathematical vectors in JavaScript. The vector space is n-d
 
 A vector is defined here as a set of ordered coordinates in the vector space of cardinality **n** which has both magnitude and direction. VectorJS implements functionality to represent a vector as a 1-dimensional array containing **n** elements as input for each method.
 
+[![Build Status](https://travis-ci.org/spikeburton/vector-js.svg?branch=master)](https://travis-ci.org/spikeburton/vector-js)
+
 ## Install
 
 ```sh
 npm i @glazier/vector-js
 ```
+
+## TODO:
+## 🚧🚧🚧
+
+- Add Babel for backwards compatibility
+- Add Rollup for build minification
+- Add ESLint integration
 
 ## Usage
 
