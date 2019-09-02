@@ -70,8 +70,7 @@ console.log(v1.getAxis(2));
 
 ---
 ## 🚧🚧🚧
-
-TODO:
+### TODO:
 
 - Add Babel for backwards compatibility
 - Add Rollup for build minification
