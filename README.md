@@ -16,14 +16,6 @@ A vector is defined here as a set of ordered coordinates in the vector space of 
 npm i @glazier/vector-js
 ```
 
-## 🚧🚧🚧
-
-TODO:
-
-- Add Babel for backwards compatibility
-- Add Rollup for build minification
-- Add ESLint integration
-
 ## Usage
 
 ```js
@@ -75,3 +67,13 @@ console.log(v1.coords);
 // OUTPUT: 13
 console.log(v1.getAxis(2));
 ```
+
+---
+## 🚧🚧🚧
+
+TODO:
+
+- Add Babel for backwards compatibility
+- Add Rollup for build minification
+- Add ESLint integration
+- Improve documentation and add examples
