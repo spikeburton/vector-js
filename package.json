@@ -11,11 +11,20 @@
     "url": "git+https://github.com/spikeburton/vector-js.git"
   },
   "keywords": [
+    "vector-js",
     "vector",
+    "vectors",
     "javascript",
-    "math"
+    "math",
+    "mathematics",
+    "linear algebra",
+    "array",
+    "array normal"
   ],
-  "author": "Spike Burton & Allen Woods",
+  "authors": [
+    "Spike Burton <spikeburton@icloud.com> (https://github.com/spikeburton)",
+    "Allen Woods <allen@thesupertask.com> (https://github.com/allen-woods)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/spikeburton/vector-js/issues"
