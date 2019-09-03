@@ -1,23 +1,20 @@
 # VectorJS
 
+[![Build Status](https://travis-ci.org/spikeburton/vector-js.svg?branch=master)](https://travis-ci.org/spikeburton/vector-js)
+[![npm (scoped)](https://img.shields.io/npm/v/@glazier/vector-js)](https://www.npmjs.com/package/@glazier/vector-js)
+[![GitHub](https://img.shields.io/github/license/spikeburton/vector-js?color=blue)](https://github.com/spikeburton/vector-js/blob/master/LICENSE.md)
+[![GitHub issues](https://img.shields.io/github/issues/spikeburton/vector-js)](https://github.com/spikeburton/vector-js/issues)
+[![GitHub closed issues](https://img.shields.io/github/issues-closed/spikeburton/vector-js)](https://github.com/spikeburton/vector-js/issues?q=is%3Aissue+is%3Aclosed)
+
 An implementation of mathematical vectors in JavaScript. The vector space is n-dimensional, with support for cross product and tension vectors.
 
 A vector is defined here as a set of ordered coordinates in the vector space of cardinality **n** which has both magnitude and direction. VectorJS implements functionality to represent a vector as a 1-dimensional array containing **n** elements as input for each method.
-
-[![Build Status](https://travis-ci.org/spikeburton/vector-js.svg?branch=master)](https://travis-ci.org/spikeburton/vector-js)
 
 ## Install
 
 ```sh
 npm i @glazier/vector-js
 ```
-
-## TODO:
-## 🚧🚧🚧
-
-- Add Babel for backwards compatibility
-- Add Rollup for build minification
-- Add ESLint integration
 
 ## Usage
 
@@ -70,3 +67,12 @@ console.log(v1.coords);
 // OUTPUT: 13
 console.log(v1.getAxis(2));
 ```
+
+---
+## 🚧🚧🚧
+### TODO:
+
+- Add Babel for backwards compatibility
+- Add Rollup for build minification
+- Add ESLint integration
+- Improve documentation and add examples

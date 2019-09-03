@@ -1,6 +1,6 @@
 {
   "name": "@glazier/vector-js",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "An implementation of mathematical vectors in JavaScript",
   "main": "src/index.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "array",
     "array normal"
   ],
-  "authors": [
+  "contributors": [
     "Spike Burton <spikeburton@icloud.com> (https://github.com/spikeburton)",
     "Allen Woods <allen@thesupertask.com> (https://github.com/allen-woods)"
   ],
