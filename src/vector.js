@@ -10,7 +10,7 @@ const is = require('./is');
  **/
 
 const precision = floatNum => {
-  return +parseFloat(floatNum).toFixed(16);
+  return parseFloat(floatNum.toFixed(16));
 };
 class Vector {
   /**
@@ -135,147 +135,94 @@ class Vector {
 
   /* Class Methods */
 
-  static vectorAdd(a, b) {
-    return precision(a + b);
-  }
-  static vectorSub(a, b) {
-    return precision(a - b);
-  }
-  static vectorMul(a, b) {
-    return precision(a * b);
-  }
-  static vectorDiv(a, b) {
-    return precision(a / b);
-  }
-
-  // New arithmetic operator function
-  static operate(v1, v2, operationsArray) {
-    if (v1 && v2 && operationsArray) {
+  static addsub(v1, v2, cb) {
+    if (v1 && v2) {
       v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
-      // We convert scalar values to temporary vectors internally
-      v2 = is(v2, 'Number') ? Vector.toVector([v2]) : v2;
       v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
-
-      let results = [];
 
       let a = v1.coords;
       let b = v2.coords;
 
-      let m = false;
-      let n = false;
+      if (a.length === b.length) {
+        const result = [];
 
-      if (a.length === 1 || b.length === 1) {
-        if (a.length === 1) {
-          m = 1;
-        } else if (b.length === 1) {
-          m = a.length;
+        for (let i = 0; i < a.length; i++) {
+          result.push(precision(cb(a[i], b[i])));
         }
-        n = 1;
+
+        return new Vector(...result);
       } else {
-        if (a.length !== b.length) {
-          throw new Error('Vectors must inhabit the same coordinate space.');
-        } else {
-          m = a.length;
-        }
-        n = m;
+        throw new Error('Vectors must inhabit the same coordinate space');
       }
-
-      if (!isNaN(m) && !isNaN(n)) {
-        for (let i = 0; i < operationsArray.length; i++) {
-          a = i > 0 ? results : a;
-          results = i > 0 ? [] : results;
-
-          let opName = operationsArray[i];
-
-          for (let j = 0; j < Math.max(m, n); j++) {
-            if (m === 1) {
-              results.push(Vector[`vector${opName}`](a[j], b[j]));
-            } else if (m !== n) {
-              results.push(Vector[`vector${opName}`](a[j], b[0]));
-            } else {
-              results.push(Vector[`vector${opName}`](a[j], b[j]));
-            }
-          }
-        }
-      }
-
-      return results;
     }
+
+    return false;
+  }
+
+  static muldiv(scalar, vector, cb) {
+    if (scalar && vector) {
+      vector = is(vector, 'Array') ? Vector.toVector(vector) : vector;
+
+      let a = vector.coords;
+
+      if (is(scalar, 'Number') && a) {
+        const result = [];
+
+        for (let i = 0; i < a.length; i++) {
+          result.push(precision(cb(scalar, a[i])));
+        }
+
+        return new Vector(...result);
+      } else {
+        throw new Error('Vectors must be scaled by a finite real number');
+      }
+    }
+
+    return false;
   }
 
   static add(v1, v2) {
-    let result = false;
-
-    try {
-      let params = Vector.operate(v1, v2, ['Add']);
-      result = new Vector(...params);
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
-    }
-    return result;
+    return Vector.addsub(v1, v2, (a, b) => a + b);
   }
 
   static sub(v1, v2) {
-    let result = false;
-
-    try {
-      let params = Vector.operate(v1, v2, ['Sub']);
-      result = new Vector(...params);
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
-    }
-    return result;
+    return Vector.addsub(v1, v2, (a, b) => a - b);
   }
 
-  static mul(scalar, v1) {
-    let result = false;
-
-    try {
-      let params = Vector.operate(v1, scalar, ['Mul']);
-      result = new Vector(...params);
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
-    }
-    return result;
+  static mul(scalar, v) {
+    return Vector.muldiv(scalar, v, (a, b) => a * b);
   }
 
-  static div(scalar, v1) {
-    let result = false;
-
-    try {
-      let params = Vector.operate(v1, scalar, ['Div']);
-      result = new Vector(...params);
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
-    }
-    return result;
+  static div(scalar, v) {
+    return Vector.muldiv(scalar, v, (a, b) => b / a);
   }
 
   static dot(v1, v2) {
-    let result = false;
+    if (v1 && v2) {
+      v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
+      v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
 
-    try {
-      let product = Vector.operate(v1, v2, ['Mul']);
+      let a = v1.coords;
+      let b = v2.coords;
 
-      result = product.reduce((a, c) => a + c, 0);
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
+      if (a.length === b.length) {
+        const result = [];
+
+        for (let i = 0; i < a.length; i++) {
+          result.push(precision(a[i] * b[i]));
+        }
+
+        return result.reduce((a, c) => a + c, 0);
+      } else {
+        throw new Error('Vectors must inhabit the same coordinate space');
+      }
     }
-    return result;
+
+    return false;
   }
 
-  static normalize(vectorObj) {
-    let result = false;
-
-    try {
-      if (is(vectorObj, 'Vector')) {
-        let params = Vector.operate(vectorObj, vectorObj.length, ['Div']);
-        result = new Vector(...params);
-      }
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
-    }
-    return result;
+  static normalize(v) {
+    return Vector.muldiv(v.length, v, (a, b) => b / a);
   }
 
   // Must pass in an array or vector
