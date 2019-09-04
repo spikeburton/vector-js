@@ -84,5 +84,6 @@ console.log(v1.getAxis(2));
 ### TODO:
 
 - Add Babel for backwards compatibility
-, which take a callback to operate on the vector()s- - Add ESLint integration
+- Add Rollup for build minification
+- Add ESLint integration
 - Improve documentation and add examples
