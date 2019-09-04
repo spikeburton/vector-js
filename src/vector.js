@@ -9,6 +9,9 @@ const is = require('./is');
  * @author Allen Woods
  **/
 
+const precision = floatNum => {
+  return +parseFloat(floatNum).toFixed(16);
+};
 class Vector {
   /**
    * A vector is defined here as an unknown quantity of spacial coordinates
@@ -37,20 +40,17 @@ class Vector {
   setAxis(axisNum, newValue) {
     let result = false;
 
-    try {
-      if (is(newValue, 'Number')) {
-        let min = 0;
-        let max = this._coords.length - 1;
+    if (is(newValue, 'Number')) {
+      let min = 0;
+      let max = this._coords.length - 1;
 
-        axisNum = axisNum < min ? 0 : axisNum;
-        axisNum = axisNum > max ? max : axisNum;
+      axisNum = axisNum < min ? 0 : axisNum;
+      axisNum = axisNum > max ? max : axisNum;
 
-        this._coords[axisNum] = newValue;
-        result = true;
-      }
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
+      this._coords[axisNum] = newValue;
+      result = true;
     }
+
     return result;
   }
 
@@ -136,16 +136,16 @@ class Vector {
   /* Class Methods */
 
   static vectorAdd(a, b) {
-    return +parseFloat(a + b).toFixed(16);
+    return precision(a + b);
   }
   static vectorSub(a, b) {
-    return +parseFloat(a - b).toFixed(16);
+    return precision(a - b);
   }
   static vectorMul(a, b) {
-    return +parseFloat(a * b).toFixed(16);
+    return precision(a * b);
   }
   static vectorDiv(a, b) {
-    return +parseFloat(a / b).toFixed(16);
+    return precision(a / b);
   }
 
   // New arithmetic operator function
@@ -314,16 +314,9 @@ class Vector {
   }
 
   static toVector(arrayObj) {
-    let result = false;
-
-    try {
-      if (is(arrayObj, 'Array')) {
-        result = new Vector(...arrayObj);
-      }
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
-    }
-    return result;
+    if (is(arrayObj, 'Array')) {
+      return new Vector(...arrayObj);
+    } else return false;
   }
 
   /* Helper Methods */
