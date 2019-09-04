@@ -80,7 +80,7 @@ test('should update coordinates at a given axis and confirm the result', () => {
   expect(v1.getAxis(1)).toBe(9);
 });
 
-test('should throw an error when arguments are not in the correct vector space', () => {
+test('cross product should throw an error when arguments are not in the correct vector space', () => {
   const v1 = new Vector(4, 9, 11);
   const v2 = new Vector(1, 2);
 
@@ -95,5 +95,39 @@ test('should throw an error when arguments are not in the correct vector space',
   }).toThrow();
   expect(() => {
     v1.cross(v2);
+  }).toThrow();
+});
+
+test('add and sub should throw an error when vectors do not inhabit the same vector space', () => {
+  const v1 = new Vector(3, 5, 7);
+  const v2 = new Vector(2, 4, 6, 8);
+
+  expect(() => {
+    v1.add(v2);
+  }).toThrow();
+  expect(() => {
+    v1.sub(v2);
+  }).toThrow();
+});
+
+test('mul and div should throw an error when a vector is not scaled by finite real number', () => {
+  const v1 = new Vector(3, 5, 7);
+
+  expect(() => {
+    v1.mul(Infinity);
+  }).toThrow();
+  expect(v1.mul(null)).toBe(false);
+  expect(() => {
+    v1.div(Infinity);
+  }).toThrow();
+  expect(v1.div(null)).toBe(false);
+});
+
+test('dot product must receive vectors from the same vector space', () => {
+  const v1 = new Vector(1, 3, 5);
+  const v2 = new Vector(7, 3, 2, 11, 5);
+
+  expect(() => {
+    v1.dot(v2);
   }).toThrow();
 });
