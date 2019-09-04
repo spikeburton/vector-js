@@ -135,7 +135,7 @@ class Vector {
 
   /* Class Methods */
 
-  static addsub(v1, v2, cb) {
+  static combine(v1, v2, cb) {
     if (v1 && v2) {
       v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
       v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
@@ -159,7 +159,7 @@ class Vector {
     return false;
   }
 
-  static muldiv(scalar, vector, cb) {
+  static scale(scalar, vector, cb) {
     if (scalar && vector) {
       vector = is(vector, 'Array') ? Vector.toVector(vector) : vector;
 
@@ -182,19 +182,19 @@ class Vector {
   }
 
   static add(v1, v2) {
-    return Vector.addsub(v1, v2, (a, b) => a + b);
+    return Vector.combine(v1, v2, (a, b) => a + b);
   }
 
   static sub(v1, v2) {
-    return Vector.addsub(v1, v2, (a, b) => a - b);
+    return Vector.combine(v1, v2, (a, b) => a - b);
   }
 
   static mul(scalar, v) {
-    return Vector.muldiv(scalar, v, (a, b) => a * b);
+    return Vector.scale(scalar, v, (a, b) => a * b);
   }
 
   static div(scalar, v) {
-    return Vector.muldiv(scalar, v, (a, b) => b / a);
+    return Vector.scale(scalar, v, (a, b) => b / a);
   }
 
   static dot(v1, v2) {
@@ -222,7 +222,7 @@ class Vector {
   }
 
   static normalize(v) {
-    return Vector.muldiv(v.length, v, (a, b) => b / a);
+    return Vector.scale(v.length, v, (a, b) => b / a);
   }
 
   // Must pass in an array or vector
