@@ -68,11 +68,21 @@ console.log(v1.coords);
 console.log(v1.getAxis(2));
 ```
 
----
+## Release Notes
+
+- 1.2.0:
+  - New and improved algorithms for vector operations designed to be more efficient
+  - Addition of `combine` and `scale` methods which are designed to be flexible by taking a callback to operate on a vector
+  - Improved error handling for all operations
+  - Improved checking to ensure scalars must be finite and non-empty
+- 1.1.1:
+  - Improved documentation
+  - Added Travis CI and Jest for testing
+  - Refactored iterators in vector operations to not use reduce
+
 ## 🚧🚧🚧
 ### TODO:
 
 - Add Babel for backwards compatibility
-- Add Rollup for build minification
-- Add ESLint integration
+, which take a callback to operate on the vector()s- - Add ESLint integration
 - Improve documentation and add examples
