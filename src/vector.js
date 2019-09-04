@@ -198,31 +198,12 @@ class Vector {
   }
 
   static dot(v1, v2) {
-    // if (v1 && v2) {
-    //   v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
-    //   v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
+    const res = Vector.combine(v1, v2, (a, b) => a * b);
+    if (res) {
+      return res.coords.reduce((a, c) => a + c, 0);
+    }
 
-    //   let a = v1.coords;
-    //   let b = v2.coords;
-
-    //   if (a.length === b.length) {
-    //     const result = [];
-
-    //     for (let i = 0; i < a.length; i++) {
-    //       result.push(precision(a[i] * b[i]));
-    //     }
-
-    //     return result.reduce((a, c) => a + c, 0);
-    //   } else {
-    //     throw new Error('Vectors must inhabit the same coordinate space');
-    //   }
-    // }
-
-    // return false;
-    return Vector.combine(v1, v2, (a, b) => a * b).coords.reduce(
-      (a, c) => a + c,
-      0
-    );
+    return false;
   }
 
   static normalize(v) {
