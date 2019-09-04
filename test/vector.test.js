@@ -79,3 +79,21 @@ test('should update coordinates at a given axis and confirm the result', () => {
   expect(v1.toArray()).toEqual([3, 9, 7]);
   expect(v1.getAxis(1)).toBe(9);
 });
+
+test('should throw an error when arguments are not in the correct vector space', () => {
+  const v1 = new Vector(4, 9, 11);
+  const v2 = new Vector(1, 2);
+
+  expect(() => {
+    Vector.cross([1, 2], [2, 3]);
+  }).toThrow();
+  expect(() => {
+    Vector.cross([1, 2], [1, 2, 3]);
+  }).toThrow();
+  expect(() => {
+    v1.cross([2, 3]);
+  }).toThrow();
+  expect(() => {
+    v1.cross(v2);
+  }).toThrow();
+});

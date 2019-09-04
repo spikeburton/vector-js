@@ -9,6 +9,9 @@ const is = require('./is');
  * @author Allen Woods
  **/
 
+const precision = floatNum => {
+  return +parseFloat(floatNum).toFixed(16);
+};
 class Vector {
   /**
    * A vector is defined here as an unknown quantity of spacial coordinates
@@ -37,20 +40,17 @@ class Vector {
   setAxis(axisNum, newValue) {
     let result = false;
 
-    try {
-      if (is(newValue, 'Number')) {
-        let min = 0;
-        let max = this._coords.length - 1;
+    if (is(newValue, 'Number')) {
+      let min = 0;
+      let max = this._coords.length - 1;
 
-        axisNum = axisNum < min ? 0 : axisNum;
-        axisNum = axisNum > max ? max : axisNum;
+      axisNum = axisNum < min ? 0 : axisNum;
+      axisNum = axisNum > max ? max : axisNum;
 
-        this._coords[axisNum] = newValue;
-        result = true;
-      }
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
+      this._coords[axisNum] = newValue;
+      result = true;
     }
+
     return result;
   }
 
@@ -136,16 +136,16 @@ class Vector {
   /* Class Methods */
 
   static vectorAdd(a, b) {
-    return +parseFloat(a + b).toFixed(16);
+    return precision(a + b);
   }
   static vectorSub(a, b) {
-    return +parseFloat(a - b).toFixed(16);
+    return precision(a - b);
   }
   static vectorMul(a, b) {
-    return +parseFloat(a * b).toFixed(16);
+    return precision(a * b);
   }
   static vectorDiv(a, b) {
-    return +parseFloat(a / b).toFixed(16);
+    return precision(a / b);
   }
 
   // New arithmetic operator function
@@ -278,52 +278,30 @@ class Vector {
     return result;
   }
 
+  // Must pass in an array or vector
   static cross(v1, v2) {
-    let result = false;
+    v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
+    v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
 
-    try {
-      v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
-      v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
+    let a = v1.coords;
+    let b = v2.coords;
 
-      let a = v1.coords;
-      let b = v2.coords;
-
-      if (a.length === b.length && a.length === 3) {
-        let params = [
-          Vector.vectorSub(
-            Vector.vectorMul(a[1], b[2]),
-            Vector.vectorMul(a[2], b[1])
-          ),
-          Vector.vectorSub(
-            Vector.vectorMul(a[2], b[0]),
-            Vector.vectorMul(a[0], b[2])
-          ),
-          Vector.vectorSub(
-            Vector.vectorMul(a[0], b[1]),
-            Vector.vectorMul(a[1], b[0])
-          )
-        ];
-        result = new Vector(...params);
-      } else {
-        throw new Error('Cross product is only available in three dimensions.');
-      }
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
+    if (a && b && a.length === b.length && a.length === 3) {
+      let params = [
+        precision(a[1] * b[2] - a[2] * b[1]),
+        precision(a[2] * b[0] - a[0] * b[2]),
+        precision(a[0] * b[1] - a[1] * b[0])
+      ];
+      return new Vector(...params);
+    } else {
+      throw new Error('Cross product is only available in three dimensions.');
     }
-    return result;
   }
 
   static toVector(arrayObj) {
-    let result = false;
-
-    try {
-      if (is(arrayObj, 'Array')) {
-        result = new Vector(...arrayObj);
-      }
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
-    }
-    return result;
+    if (is(arrayObj, 'Array')) {
+      return new Vector(...arrayObj);
+    } else return false;
   }
 
   /* Helper Methods */
