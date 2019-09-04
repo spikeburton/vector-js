@@ -278,30 +278,24 @@ class Vector {
     return result;
   }
 
+  // Must pass in an array or vector
   static cross(v1, v2) {
-    let result = false;
+    v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
+    v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
 
-    try {
-      v1 = is(v1, 'Array') ? Vector.toVector(v1) : v1;
-      v2 = is(v2, 'Array') ? Vector.toVector(v2) : v2;
+    let a = v1.coords;
+    let b = v2.coords;
 
-      let a = v1.coords;
-      let b = v2.coords;
-
-      if (a.length === b.length && a.length === 3) {
-        let params = [
-          precision(a[1] * b[2] - a[2] * b[1]),
-          precision(a[2] * b[0] - a[0] * b[2]),
-          precision(a[0] * b[1] - a[1] * b[0])
-        ];
-        result = new Vector(...params);
-      } else {
-        throw new Error('Cross product is only available in three dimensions.');
-      }
-    } catch (error) {
-      console.error(`ERROR: ${error}`);
+    if (a && b && a.length === b.length && a.length === 3) {
+      let params = [
+        precision(a[1] * b[2] - a[2] * b[1]),
+        precision(a[2] * b[0] - a[0] * b[2]),
+        precision(a[0] * b[1] - a[1] * b[0])
+      ];
+      return new Vector(...params);
+    } else {
+      throw new Error('Cross product is only available in three dimensions.');
     }
-    return result;
   }
 
   static toVector(arrayObj) {
