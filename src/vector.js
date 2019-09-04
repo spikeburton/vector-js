@@ -290,18 +290,9 @@ class Vector {
 
       if (a.length === b.length && a.length === 3) {
         let params = [
-          Vector.vectorSub(
-            Vector.vectorMul(a[1], b[2]),
-            Vector.vectorMul(a[2], b[1])
-          ),
-          Vector.vectorSub(
-            Vector.vectorMul(a[2], b[0]),
-            Vector.vectorMul(a[0], b[2])
-          ),
-          Vector.vectorSub(
-            Vector.vectorMul(a[0], b[1]),
-            Vector.vectorMul(a[1], b[0])
-          )
+          precision(a[1] * b[2] - a[2] * b[1]),
+          precision(a[2] * b[0] - a[0] * b[2]),
+          precision(a[0] * b[1] - a[1] * b[0])
         ];
         result = new Vector(...params);
       } else {
